@@ -17,7 +17,7 @@ export default function Blog() {
           aria-hidden="true"
         />
         <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[11px] text-signal mb-6">Blog</p>
+          <p className="font-mono-label text-[14px] text-signal mb-6">Blog</p>
           <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
             Notes from building product software.
           </h1>
@@ -33,7 +33,7 @@ export default function Blog() {
           <Reveal>
             <article className="grid md:grid-cols-5 gap-8 bg-white border border-line-soft rounded-2xl p-8 md:p-10 mb-14">
               <div className="md:col-span-4">
-                <div className="flex items-center gap-4 font-mono-label text-[10px] text-signal-dim mb-4">
+                <div className="flex items-center gap-4 font-mono-label text-[12px] text-signal-dim mb-4">
                   <span>{featured.tag}</span>
                   <span className="text-graphite">{featured.date}</span>
                 </div>
@@ -54,7 +54,7 @@ export default function Blog() {
             {rest.map((post, i) => (
               <Reveal key={post.title} delay={i * 100}>
                 <article className="border border-line-soft rounded-2xl p-7 h-full hover:border-signal transition-colors">
-                  <div className="flex items-center gap-3 font-mono-label text-[10px] text-signal-dim mb-4">
+                  <div className="flex items-center gap-3 font-mono-label text-[12px] text-signal-dim mb-4">
                     <span>{post.tag}</span>
                     <span className="text-graphite">{post.date}</span>
                   </div>

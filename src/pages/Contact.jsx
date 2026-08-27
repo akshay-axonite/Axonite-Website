@@ -22,7 +22,7 @@ export default function Contact() {
           aria-hidden="true"
         />
         <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[11px] text-signal mb-6">Contact</p>
+          <p className="font-mono-label text-[14px] text-signal mb-6">Contact</p>
           <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
             Tell us what you're building.
           </h1>
@@ -37,22 +37,22 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-5 gap-12">
           <div className="md:col-span-2">
             <Reveal>
-              <p className="font-mono-label text-[11px] text-signal-dim mb-4">Reach us directly</p>
+              <p className="font-mono-label text-[14px] text-signal-dim mb-4">Reach us directly</p>
               <ul className="space-y-6">
                 <li>
-                  <p className="font-mono-label text-[10px] text-graphite mb-1">Email</p>
+                  <p className="font-mono-label text-[12px] text-graphite mb-1">Email</p>
                   <a href="mailto:hello@axonite.in" className="font-display text-xl font-semibold hover:text-signal-dim">
-                    hello@axonite.in
+                    info@axonite.in
                   </a>
                 </li>
                 <li>
-                  <p className="font-mono-label text-[10px] text-graphite mb-1">Phone</p>
-                  <a href="tel:+912045678899" className="font-display text-xl font-semibold hover:text-signal-dim">
-                    +91 20 4567 8899
+                  <p className="font-mono-label text-[12px] text-graphite mb-1">Phone</p>
+                  <a href="tel:+91" className="font-display text-xl font-semibold hover:text-signal-dim">
+                    +91 9823103626
                   </a>
                 </li>
                 <li>
-                  <p className="font-mono-label text-[10px] text-graphite mb-1">Office</p>
+                  <p className="font-mono-label text-[12px] text-graphite mb-1">Office</p>
                   <p className="font-display text-xl font-semibold">
                     Pune, Maharashtra, India
                   </p>
@@ -75,13 +75,14 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="bg-white border border-line-soft rounded-2xl p-8 space-y-5">
-                  <div className="grid md:grid-cols-2 gap-5">
-                    <Field label="Name" id="name" type="text" required />
+                  <div className="grid md:grid-cols-2 gap-5 ">
+                    <Field label="Name" id="name" type="text" required  />
                     <Field label="Work email" id="email" type="email" required />
                   </div>
-                  <Field label="Company" id="company" type="text" />
+                  <Field label="Company" id="company" type="text" 
+                  />
                   <div>
-                    <label htmlFor="message" className="font-mono-label text-[10px] text-graphite block mb-2">
+                    <label htmlFor="message" className="font-mono-label text-[12px] text-graphite block mb-2">
                       Project details
                     </label>
                     <textarea
@@ -111,7 +112,7 @@ export default function Contact() {
 function Field({ label, id, type, required }) {
   return (
     <div>
-      <label htmlFor={id} className="font-mono-label text-[10px] text-graphite block mb-2">
+      <label htmlFor={id} className="font-mono-label text-[12px] text-graphite block mb-2">
         {label}
       </label>
       <input

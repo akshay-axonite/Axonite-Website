@@ -23,7 +23,7 @@ export default function Career() {
           aria-hidden="true"
         />
         <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[11px] text-signal mb-6">Career</p>
+          <p className="font-mono-label text-[14px] text-signal mb-6">Career</p>
           <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
             Work on software people actually depend on.
           </h1>
@@ -38,7 +38,7 @@ export default function Career() {
       <section className="bg-paper py-24">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal-dim mb-4">Open roles</p>
+            <p className="font-mono-label text-[14px] text-signal-dim mb-4">Open roles</p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold max-w-xl">
               Currently hiring for four positions.
             </h2>
@@ -55,14 +55,14 @@ export default function Career() {
                     <p className="text-graphite text-sm max-w-md leading-relaxed">
                       {job.desc}
                     </p>
-                    <div className="flex gap-4 mt-3 font-mono-label text-[10px] text-signal-dim">
+                    <div className="flex gap-4 mt-3 font-mono-label text-[12px] text-signal-dim">
                       <span>{job.location}</span>
                       <span>{job.type}</span>
                     </div>
                   </div>
                   <a
                     href="mailto:careers@axonite.in"
-                    className="shrink-0 inline-flex items-center justify-center border border-line-soft rounded-full px-5 py-2.5 font-mono-label text-[11px] hover:border-signal hover:text-signal-dim transition-colors"
+                    className="shrink-0 inline-flex items-center justify-center border border-line-soft rounded-full px-5 py-2.5 font-mono-label text-[14px] hover:border-signal hover:text-signal-dim transition-colors"
                   >
                     Apply
                   </a>
@@ -76,7 +76,7 @@ export default function Career() {
       <section className="bg-ink py-24">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal mb-4">Why join</p>
+            <p className="font-mono-label text-[14px] text-signal mb-4">Why join</p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold text-paper max-w-xl">
               What you get, beyond the paycheck.
             </h2>

@@ -30,7 +30,7 @@ export default function Products() {
           aria-hidden="true"
         />
         <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[11px] text-signal mb-6">Products</p>
+          <p className="font-mono-label text-[14px] text-signal mb-6">Products</p>
           <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
             Three products. Each one earns its keep on its own.
           </h1>
@@ -48,7 +48,7 @@ export default function Products() {
         >
           <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-14 items-center">
             <Reveal className={i % 2 === 1 ? "md:order-2" : ""}>
-              <p className="font-mono-label text-[10px] text-signal-dim mb-4">
+              <p className="font-mono-label text-[12px] text-signal-dim mb-4">
                 {p.tag}
               </p>
               <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
@@ -58,7 +58,7 @@ export default function Products() {
                 {p.desc}
               </p>
               <p className="text-sm text-ink/70 mb-6 max-w-lg">
-                <span className="font-mono-label text-[10px] text-signal-dim block mb-1">
+                <span className="font-mono-label text-[12px] text-signal-dim block mb-1">
                   Best for
                 </span>
                 {p.idealFor}

@@ -31,7 +31,7 @@ export default function About() {
           aria-hidden="true"
         />
         <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[11px] text-signal mb-6">About Axonite</p>
+          <p className="font-mono-label text-[14px] text-signal mb-6">About Axonite</p>
           <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
             A small team building software we'd want to use ourselves.
           </h1>
@@ -46,7 +46,7 @@ export default function About() {
       <section className="bg-paper py-24">
         <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-start">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal-dim mb-4">Where we work from</p>
+            <p className="font-mono-label text-[14px] text-signal-dim mb-4">Where we work from</p>
             <h2 className="font-display text-3xl font-semibold mb-5">
               Pune, with a team that ships remotely too.
             </h2>
@@ -90,7 +90,7 @@ export default function About() {
       <section className="bg-ink py-24">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal mb-4">What we hold to</p>
+            <p className="font-mono-label text-[14px] text-signal mb-4">What we hold to</p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold text-paper max-w-xl">
               Three things that shape how we build.
             </h2>

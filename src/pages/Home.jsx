@@ -38,9 +38,9 @@ export default function Home() {
         <div
           ref={heroTextRef}
           data-parallax
-          className="relative max-w-6xl mx-auto px-6 pt-32 pb-24 w-full"
+          className="relative max-w-6xl mx-auto px-6 pt-22 md:pt-40 pb-24 w-full"
         >
-          <p className="font-mono-label text-[11px] text-signal mb-6">
+          <p className="font-mono-label text-[14px] text-signal mb-6 ">
             Axonite Technology Pvt Ltd — Product Software
           </p>
           <h1 className="font-display text-paper text-5xl md:text-7xl font-semibold leading-[1.05] max-w-3xl">
@@ -77,7 +77,7 @@ export default function Home() {
       <section className="bg-paper py-28">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal-dim mb-4">
+            <p className="font-mono-label text-[14px] text-signal-dim mb-4">
               What we run
             </p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold max-w-xl">
@@ -92,7 +92,7 @@ export default function Home() {
                   to="/products"
                   className="block bg-white border border-line-soft rounded-2xl p-8 h-full hover:border-signal transition-colors"
                 >
-                  <p className="font-mono-label text-[10px] text-signal-dim mb-4">
+                  <p className="font-mono-label text-[12px] text-signal-dim mb-4">
                     {p.tag}
                   </p>
                   <h3 className="font-display text-2xl font-semibold mb-3">
@@ -109,7 +109,7 @@ export default function Home() {
             <div className="mt-10">
               <Link
                 to="/products"
-                className="font-mono-label text-[11px] text-signal-dim underline underline-offset-4"
+                className="font-mono-label text-[14px] text-signal-dim underline underline-offset-4"
               >
                 See full product details
               </Link>
@@ -123,7 +123,7 @@ export default function Home() {
         <ParallaxBand />
         <div className="relative max-w-6xl mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal mb-4">
+            <p className="font-mono-label text-[14px] text-signal mb-4">
               How a project moves
             </p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold text-paper max-w-xl">
@@ -135,7 +135,7 @@ export default function Home() {
             {process.map((step, i) => (
               <Reveal key={step.step} delay={i * 100}>
                 <div className="border-t-2 border-signal pt-5">
-                  <p className="font-mono-label text-[10px] text-mist mb-3">
+                  <p className="font-mono-label text-[12px] text-mist mb-3">
                     0{i + 1}
                   </p>
                   <h3 className="font-display text-paper text-lg font-semibold mb-2">

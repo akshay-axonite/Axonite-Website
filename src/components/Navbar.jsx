@@ -28,16 +28,16 @@ export default function Navbar() {
         scrolled ? "border-b border-line-soft shadow-sm" : "border-b border-transparent"
       }`}
     >
-      <nav className="max-w-6xl mx-auto flex items-center justify-between px-6 py-3 relative">
+      <nav className="max-w-6xl mx-auto flex items-center justify-between px-4 md:px-6 py-6 md:py-3 relative">
   <NavLink to="/" className="flex items-center w-48 relative">
     <img
       src="/logo-landscape.png"
       alt="Axonite Technology Pvt Ltd"
-      className="absolute left-0 top-1/2 -translate-y-1/2 h-20 md:h-24 w-auto"
+      className="absolute left-0 top-1/2 -translate-y-1/2 h-35 md:h-30 w-auto"
     />
   </NavLink>
 
-        <ul className="hidden md:flex items-center gap-8 font-mono-label text-[11px] text-graphite">
+        <ul className="hidden md:flex items-center gap-8 font-mono-label text-[11px] text-blue">
           {links.map((l) => (
             <li key={l.to}>
               <NavLink
@@ -45,8 +45,8 @@ export default function Navbar() {
                 className={({ isActive }) =>
                   `pb-1 border-b transition-colors ${
                     isActive
-                      ? "text-signal border-signal"
-                      : "border-transparent hover:text-ink hover:border-mist"
+                      ? "text-signal border-signal font-bold"
+                      : "border-transparent hover:text-ink hover:border-mist hover:font-bold"
                   }`
                 }
               >
@@ -81,14 +81,14 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="md:hidden bg-paper border-t border-line-soft px-6 py-4 flex flex-col gap-4">
+        <div className="md:hidden bg-paper border-t border-line-soft px-6 py-4 flex flex-col gap-4 ">
           {links.map((l) => (
             <NavLink
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `font-mono-label text-xs ${isActive ? "text-signal" : "text-graphite"}`
+                `font-mono-label text-xs ${isActive ? "text-signal font-bold" : "text-graphite"}`
               }
             >
               {l.label}

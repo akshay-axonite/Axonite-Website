@@ -17,7 +17,7 @@ export default function Services() {
           aria-hidden="true"
         />
         <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[11px] text-signal mb-6">Services</p>
+          <p className="font-mono-label text-[14px] text-signal mb-6">Services</p>
           <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
             We build the product, then we keep it running.
           </h1>
@@ -35,7 +35,7 @@ export default function Services() {
             {services.map((s, i) => (
               <Reveal key={s.title} delay={i * 100}>
                 <div className="bg-white border border-line-soft rounded-2xl p-8 h-full hover:border-signal transition-colors">
-                  <p className="font-mono-label text-[10px] text-signal-dim mb-4">
+                  <p className="font-mono-label text-[12px] text-signal-dim mb-4">
                     0{i + 1}
                   </p>
                   <h3 className="font-display text-2xl font-semibold mb-3">
@@ -52,7 +52,7 @@ export default function Services() {
       <section className="bg-ink py-24">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal mb-4">Engagement flow</p>
+            <p className="font-mono-label text-[14px] text-signal mb-4">Engagement flow</p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold text-paper max-w-xl">
               Five stages, repeated every release.
             </h2>
@@ -78,7 +78,7 @@ export default function Services() {
       <section className="bg-paper py-24">
         <div className="max-w-6xl mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[11px] text-signal-dim mb-4">Products we run today</p>
+            <p className="font-mono-label text-[14px] text-signal-dim mb-4">Products we run today</p>
             <h2 className="font-display text-3xl font-semibold max-w-xl">
               Some of this shows up in our own products.
             </h2>
@@ -87,7 +87,7 @@ export default function Services() {
             {products.map((p, i) => (
               <Reveal key={p.name} delay={i * 100}>
                 <div className="border border-line-soft rounded-2xl p-7 h-full">
-                  <p className="font-mono-label text-[10px] text-signal-dim mb-3">{p.tag}</p>
+                  <p className="font-mono-label text-[12px] text-signal-dim mb-3">{p.tag}</p>
                   <h3 className="font-display text-xl font-semibold mb-2">{p.name}</h3>
                   <p className="text-graphite text-sm leading-relaxed">{p.desc}</p>
                 </div>

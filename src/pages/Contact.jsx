@@ -64,7 +64,7 @@ export default function Contact() {
                 <li>
                   <p className="font-mono-label text-[12px] text-graphite mb-1">Email</p>
                   <a href="mailto:hello@axonite.in" className="font-display text-xl font-semibold hover:text-signal-dim">
-                    info@axonite.in
+                    info@axonite.net
                   </a>
                 </li>
                 <li>

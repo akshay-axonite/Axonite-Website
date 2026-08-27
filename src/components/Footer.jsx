@@ -44,7 +44,7 @@ export default function Footer() {
         <div>
           <p className="font-mono-label text-[11px] text-signal mb-4">Reach us</p>
           <ul className="space-y-2.5 text-sm">
-            <li>info@axonite.in</li>
+            <li>info@axonite.net</li>
             <li>+91 9823103626  </li>
             <li>Pune, Maharashtra, India</li>
           </ul>
@@ -53,7 +53,7 @@ export default function Footer() {
 
       <div className="max-w-6xl mx-auto px-6 py-6 border-t border-line flex flex-col md:flex-row justify-center items-center gap-3 text-xs  transition-colors ">
         <span>© {new Date().getFullYear()} Axonite Technology Pvt Ltd. All rights reserved.</span>
-        <span className="font-mono-label text-[10px] ">Built in Pune</span>
+        
       </div>
     </footer>
   );

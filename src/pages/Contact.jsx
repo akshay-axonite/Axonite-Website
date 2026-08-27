@@ -1,0 +1,125 @@
+import { useState } from "react";
+import { useParallax } from "../hooks/useParallax";
+import Reveal from "../components/Reveal";
+
+export default function Contact() {
+  const bgRef = useParallax(-0.12);
+  const [submitted, setSubmitted] = useState(false);
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setSubmitted(true);
+  }
+
+  return (
+    <div>
+      <section className="relative bg-ink grain overflow-hidden pt-40 pb-20">
+        <div
+          ref={bgRef}
+          data-parallax
+          className="absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full opacity-[0.14]"
+          style={{ background: "radial-gradient(circle, #3E5FE0, transparent 70%)" }}
+          aria-hidden="true"
+        />
+        <div className="relative max-w-4xl mx-auto px-6">
+          <p className="font-mono-label text-[11px] text-signal mb-6">Contact</p>
+          <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
+            Tell us what you're building.
+          </h1>
+          <p className="text-mist text-lg mt-6 max-w-2xl leading-relaxed">
+            A few lines about the problem is enough to start. We reply within
+            one working day.
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-paper py-20">
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-5 gap-12">
+          <div className="md:col-span-2">
+            <Reveal>
+              <p className="font-mono-label text-[11px] text-signal-dim mb-4">Reach us directly</p>
+              <ul className="space-y-6">
+                <li>
+                  <p className="font-mono-label text-[10px] text-graphite mb-1">Email</p>
+                  <a href="mailto:hello@axonite.in" className="font-display text-xl font-semibold hover:text-signal-dim">
+                    hello@axonite.in
+                  </a>
+                </li>
+                <li>
+                  <p className="font-mono-label text-[10px] text-graphite mb-1">Phone</p>
+                  <a href="tel:+912045678899" className="font-display text-xl font-semibold hover:text-signal-dim">
+                    +91 20 4567 8899
+                  </a>
+                </li>
+                <li>
+                  <p className="font-mono-label text-[10px] text-graphite mb-1">Office</p>
+                  <p className="font-display text-xl font-semibold">
+                    Pune, Maharashtra, India
+                  </p>
+                </li>
+              </ul>
+            </Reveal>
+          </div>
+
+          <div className="md:col-span-3">
+            <Reveal delay={100}>
+              {submitted ? (
+                <div className="bg-white border border-signal rounded-2xl p-10 text-center">
+                  <h2 className="font-display text-2xl font-semibold mb-3">
+                    Message sent.
+                  </h2>
+                  <p className="text-graphite">
+                    Thanks for writing in — we'll get back to you within one
+                    working day.
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="bg-white border border-line-soft rounded-2xl p-8 space-y-5">
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <Field label="Name" id="name" type="text" required />
+                    <Field label="Work email" id="email" type="email" required />
+                  </div>
+                  <Field label="Company" id="company" type="text" />
+                  <div>
+                    <label htmlFor="message" className="font-mono-label text-[10px] text-graphite block mb-2">
+                      Project details
+                    </label>
+                    <textarea
+                      id="message"
+                      required
+                      rows={5}
+                      placeholder="What are you looking to build or fix?"
+                      className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors resize-none"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full md:w-auto inline-flex justify-center bg-ink text-paper font-mono-label text-[11px] px-7 py-3.5 rounded-full hover:bg-signal hover:text-white transition-colors"
+                  >
+                    Send message
+                  </button>
+                </form>
+              )}
+            </Reveal>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function Field({ label, id, type, required }) {
+  return (
+    <div>
+      <label htmlFor={id} className="font-mono-label text-[10px] text-graphite block mb-2">
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        required={required}
+        className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors"
+      />
+    </div>
+  );
+}

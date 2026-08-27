@@ -1,4 +1,6 @@
 import { useState } from "react";
+import axios from "axios";
+
 import { useParallax } from "../hooks/useParallax";
 import Reveal from "../components/Reveal";
 
@@ -6,10 +8,30 @@ export default function Contact() {
   const bgRef = useParallax(-0.12);
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    setSubmitted(true);
+  async function handleSubmit(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const formData = new FormData(form);
+
+  try {
+    const response = await fetch("http://localhost:5000/send-message", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.ok) {
+      setSubmitted(true);
+      form.reset();
+    } else {
+      alert("Unable to send your message. Please try again.");
+    }
+  } catch (error) {
+    console.error("Error sending message:", error);
+    alert("Unable to connect to the server.");
   }
+}
+
 
   return (
     <div>
@@ -76,10 +98,12 @@ export default function Contact() {
               ) : (
                 <form onSubmit={handleSubmit} className="bg-white border border-line-soft rounded-2xl p-8 space-y-5">
                   <div className="grid md:grid-cols-2 gap-5 ">
-                    <Field label="Name" id="name" type="text" required  />
-                    <Field label="Work email" id="email" type="email" required />
+                    <Field label="Name" id="name" 
+                    name="name"
+                    type="text" required  />
+                    <Field label="Work email" id="email" name="email" type="email" required />
                   </div>
-                  <Field label="Company" id="company" type="text" 
+                  <Field label="Company" id="company" name="company" type="text" 
                   />
                   <div>
                     <label htmlFor="message" className="font-mono-label text-[12px] text-graphite block mb-2">
@@ -87,6 +111,7 @@ export default function Contact() {
                     </label>
                     <textarea
                       id="message"
+                      name="message"
                       required
                       rows={5}
                       placeholder="What are you looking to build or fix?"
@@ -109,7 +134,7 @@ export default function Contact() {
   );
 }
 
-function Field({ label, id, type, required }) {
+function Field({ label, id, name, type, required }) {
   return (
     <div>
       <label htmlFor={id} className="font-mono-label text-[12px] text-graphite block mb-2">
@@ -118,6 +143,7 @@ function Field({ label, id, type, required }) {
       <input
         id={id}
         type={type}
+        name={name}
         required={required}
         className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors"
       />

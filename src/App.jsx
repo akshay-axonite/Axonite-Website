@@ -9,6 +9,7 @@ import Services from "./pages/Services";
 import Career from "./pages/Career";
 import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
+import Chatbot from "./components/chatbot";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -23,6 +24,7 @@ export default function App() {
     <div className="font-body">
       <ScrollToTop />
       <Navbar />
+      <Chatbot />
       <main>
         <Routes>
           <Route path="/" element={<Home />} />

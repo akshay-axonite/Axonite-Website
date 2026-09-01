@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
+const API_BASE_URL = "http://127.0.0.1:8000";
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -17,29 +19,54 @@ export default function Chatbot() {
     if (isOpen) scrollToBottom();
   }, [messages, isTyping, isOpen]);
 
-  const handleSendMessage = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    const query = input.trim();
+    if (!query) return;
 
     const userMessage = {
       id: Date.now(),
       sender: 'user',
-      text: input.trim()
+      text: query
     };
 
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message: query }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Server returned an error');
+      }
+
+      const data = await response.json();
+
       const botResponse = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: `Got it! Let me check on "${userMessage.text}" for you.`
+        text: data.reply
       };
       setMessages((prev) => [...prev, botResponse]);
+    } catch (error) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: Date.now() + 1,
+          sender: 'bot',
+          text: '⚠️ Unable to connect to the assistant server. Please check your backend.'
+        }
+      ]);
+    } finally {
       setIsTyping(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -79,7 +106,7 @@ export default function Chatbot() {
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-[85%] px-3 py-1.5 rounded-xl leading-relaxed ${
+                  className={`max-w-[85%] px-3 py-1.5 rounded-xl leading-relaxed whitespace-pre-wrap ${
                     msg.sender === 'user'
                       ? 'bg-indigo-600 text-white rounded-br-none'
                       : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-xs'
@@ -114,8 +141,8 @@ export default function Chatbot() {
               />
               <button
                 type="submit"
-                disabled={!input.trim()}
-                className="p-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 disabled:hover:bg-indigo-600 transition-colors focus:outline-none"
+                disabled={!input.trim() || isTyping}
+                className="p-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors focus:outline-none"
                 aria-label="Send"
               >
                 <svg className="w-3.5 h-3.5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">

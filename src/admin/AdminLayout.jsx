@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import BrandMark from "../components/BrandMark";
 import { logout } from "../lib/store";
 
@@ -11,52 +12,133 @@ const links = [
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+
+  // Close the mobile drawer automatically whenever the route changes
+  useEffect(() => {
+    setIsMobileNavOpen(false);
+  }, [location.pathname]);
+
+  // Prevent background scroll while the mobile drawer is open
+  useEffect(() => {
+    document.body.style.overflow = isMobileNavOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileNavOpen]);
 
   function handleLogout() {
     logout();
     navigate("/admin/login");
   }
 
+  const activeLabel = links.find((l) =>
+    l.end ? location.pathname === l.to : location.pathname.startsWith(l.to)
+  )?.label;
+
+  const sidebarContent = (
+    <>
+      <div className="px-6 py-6 border-b border-line shrink-0">
+        <BrandMark size={24} />
+        <p className="font-mono-label text-[10px] text-mist mt-3">Admin panel</p>
+      </div>
+
+      {/* Navigation list */}
+      <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+        {links.map((l) => (
+          <NavLink
+            key={l.to}
+            to={l.to}
+            end={l.end}
+            className={({ isActive }) =>
+              `block px-4 py-2.5 rounded-lg text-sm transition-colors ${
+                isActive ? "bg-white/10 text-white" : "text-mist hover:text-white hover:bg-white/5"
+              }`
+            }
+          >
+            {l.label}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Footer actions */}
+      <div className="px-4 py-6 border-t border-line space-y-1 shrink-0">
+        <a
+          href="/"
+          className="block px-4 py-2 rounded-lg text-xs text-mist hover:text-white hover:bg-white/5"
+        >
+          View live site ↗
+        </a>
+        <button
+          onClick={handleLogout}
+          className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-mist hover:text-white hover:bg-white/5"
+        >
+          Log out
+        </button>
+      </div>
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-paper flex">
-      <aside className="w-60 bg-ink text-paper flex flex-col shrink-0">
-        <div className="px-6 py-6 border-b border-line">
-          <BrandMark size={24} />
-          <p className="font-mono-label text-[10px] text-mist mt-3">Admin panel</p>
-        </div>
-        <nav className="flex-1 px-4 py-6 space-y-1">
-          {links.map((l) => (
-            <NavLink
-              key={l.to}
-              to={l.to}
-              end={l.end}
-              className={({ isActive }) =>
-                `block px-4 py-2.5 rounded-lg text-sm transition-colors ${
-                  isActive ? "bg-white/10 text-white" : "text-mist hover:text-white hover:bg-white/5"
-                }`
-              }
-            >
-              {l.label}
-            </NavLink>
-          ))}
-        </nav>
-        <div className="px-4 py-6 border-t border-line space-y-1">
-          <a
-            href="/"
-            className="block px-4 py-2 rounded-lg text-xs text-mist hover:text-white hover:bg-white/5"
-          >
-            View live site ↗
-          </a>
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-mist hover:text-white hover:bg-white/5"
-          >
-            Log out
-          </button>
-        </div>
+    <div className="h-screen bg-paper flex overflow-hidden">
+      {/* Desktop sidebar — sticky, always visible from md breakpoint up */}
+      <aside className="hidden md:flex w-60 bg-ink text-paper flex-col shrink-0 h-screen sticky top-0 border-r border-line select-none">
+        {sidebarContent}
       </aside>
-      <div className="flex-1 min-w-0">
-        <Outlet />
+
+      {/* Mobile drawer — slides in over content, only rendered interactive below md */}
+      <div
+        className={`md:hidden fixed inset-0 z-40 transition-opacity duration-200 ${
+          isMobileNavOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
+        }`}
+        aria-hidden={!isMobileNavOpen}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={() => setIsMobileNavOpen(false)}
+        />
+
+        {/* Drawer panel */}
+        <aside
+          className={`absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-ink text-paper flex flex-col border-r border-line select-none transform transition-transform duration-200 ${
+            isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          {sidebarContent}
+        </aside>
+      </div>
+
+      {/* Main column: mobile top bar + scrollable content */}
+      <div className="flex-1 min-w-0 h-screen flex flex-col overflow-hidden">
+        {/* Mobile top bar — hidden from md breakpoint up */}
+        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-line bg-paper shrink-0">
+          <button
+            type="button"
+            onClick={() => setIsMobileNavOpen(true)}
+            aria-label="Open navigation menu"
+            className="p-2 -ml-2 rounded-lg text-ink hover:bg-black/5"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+          <span className="text-sm font-medium text-ink truncate">
+            {activeLabel || "Admin panel"}
+          </span>
+          <BrandMark size={20} />
+        </header>
+
+        {/* Scrollable content pane */}
+        <main className="flex-1 min-w-0 overflow-y-auto">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

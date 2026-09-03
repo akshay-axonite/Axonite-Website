@@ -212,21 +212,23 @@ export const useAdminStore = () => {
 const defaultApplications = [
   {
     id: "app-1",
+    qulifications: "B.Tech in Computer Science",
     candidateName: "Rohan Sharma",
     email: "rohan.sharma@example.com",
     role: "Frontend Engineer",
     appliedDate: "2026-08-28",
-    status: "Pending", // "Pending" | "Selected" | "Rejected" | "Scheduled"
+    status: "new", // "Pending" | "Selected" | "Rejected" | "Scheduled"
     interviewDate: null,
     resumeLink: "#"
   },
   {
     id: "app-2",
+    qulifications: "B.Tech in Computer Science",
     candidateName: "Priya Patel",
     email: "priya.p@example.com",
     role: "Product Designer",
     appliedDate: "2026-08-30",
-    status: "Pending",
+    status: "new",
     interviewDate: null,
     resumeLink: "#"
   }

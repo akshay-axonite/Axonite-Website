@@ -53,7 +53,9 @@ export default function Footer() {
 
       <div className="max-w-6xl mx-auto px-6 py-6 border-t border-line flex flex-col md:flex-row justify-center items-center gap-3 text-xs  transition-colors ">
         <span>© {new Date().getFullYear()} Axonite Technology Pvt Ltd. All rights reserved.</span>
-        
+        {/* <Link to="/admin/login" className="font-mono-label text-[10px] text-graphite hover:text-mist">
+            Staff login
+          </Link> */}
       </div>
     </footer>
   );

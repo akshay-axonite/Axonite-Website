@@ -64,6 +64,37 @@ export const process = [
   { step: "Support", desc: "We stay on after launch. A product without upkeep is a liability, not an asset." },
 ];
 
+export const gallery = [
+  {
+    title: "Finance workflow visibility",
+    tag: "Ledgerline",
+    accent: "#3E5FE0",
+    gradient: "linear-gradient(135deg, #10162B 0%, #1F2B67 34%, #5A7BFF 100%)",
+    description: "Exception queues, approval flows, and reconciliation views built for operations teams that need answers fast.",
+  },
+  {
+    title: "Field service at a glance",
+    tag: "Fieldpost",
+    accent: "#29B6F6",
+    gradient: "linear-gradient(135deg, #0D1D2B 0%, #123A4E 35%, #29B6F6 100%)",
+    description: "Job cards, proof-of-work checks, and live status updates for crews working out of range and offline.",
+  },
+  {
+    title: "Teams scheduled without chaos",
+    tag: "Rosterly",
+    accent: "#38E6B5",
+    gradient: "linear-gradient(135deg, #071E1A 0%, #0D453D 32%, #38E6B5 100%)",
+    description: "Shift planning and attendance data that keeps staffing stable across stores, sites, and rotating rosters.",
+  },
+  {
+    title: "Product decisions backed by data",
+    tag: "Operations",
+    accent: "#9B4FC9",
+    gradient: "linear-gradient(135deg, #171326 0%, #2B1D44 32%, #9B4FC9 100%)",
+    description: "Clear reporting and usage signals that help product teams fix the right bottlenecks without guesswork.",
+  },
+];
+
 export const jobs = [
   {
     title: "Senior Frontend Engineer",

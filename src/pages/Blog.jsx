@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { useParallax } from "../hooks/useParallax";
 import Reveal from "../components/Reveal";
-import { blogPosts } from "../data/content";
+import { getBlogPosts } from "../lib/store";
 
 export default function Blog() {
   const bgRef = useParallax(-0.12);
-  const [featured, ...rest] = blogPosts;
+  const [posts] = useState(() => getBlogPosts());
+  const [featured, ...rest] = posts;
 
   return (
     <div>
@@ -30,44 +32,50 @@ export default function Blog() {
 
       <section className="bg-paper py-20">
         <div className="max-w-6xl mx-auto px-6">
-          <Reveal>
-            <article className="grid md:grid-cols-5 gap-8 bg-white border border-line-soft rounded-2xl p-8 md:p-10 mb-14">
-              <div className="md:col-span-4">
-                <div className="flex items-center gap-4 font-mono-label text-[12px] text-signal-dim mb-4">
-                  <span>{featured.tag}</span>
-                  <span className="text-graphite">{featured.date}</span>
-                </div>
-                <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
-                  {featured.title}
-                </h2>
-                <p className="text-graphite leading-relaxed max-w-xl">
-                  {featured.excerpt}
-                </p>
-                <span className="inline-flex mt-6 text-signal-dim font-mono-label text-[11px] underline underline-offset-4">
-                  Read the post
-                </span>
-              </div>
-            </article>
-          </Reveal>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {rest.map((post, i) => (
-              <Reveal key={post.title} delay={i * 100}>
-                <article className="border border-line-soft rounded-2xl p-7 h-full hover:border-signal transition-colors">
-                  <div className="flex items-center gap-3 font-mono-label text-[12px] text-signal-dim mb-4">
-                    <span>{post.tag}</span>
-                    <span className="text-graphite">{post.date}</span>
+          {!featured ? (
+            <p className="text-graphite text-sm">No posts published yet — check back soon.</p>
+          ) : (
+            <>
+              <Reveal>
+                <article className="grid md:grid-cols-5 gap-8 bg-white border border-line-soft rounded-2xl p-8 md:p-10 mb-14">
+                  <div className="md:col-span-4">
+                    <div className="flex items-center gap-4 font-mono-label text-[12px] text-signal-dim mb-4">
+                      <span>{featured.tag}</span>
+                      <span className="text-graphite">{featured.date}</span>
+                    </div>
+                    <h2 className="font-display text-2xl md:text-3xl font-semibold mb-4">
+                      {featured.title}
+                    </h2>
+                    <p className="text-graphite leading-relaxed max-w-xl">
+                      {featured.excerpt}
+                    </p>
+                    <span className="inline-flex mt-6 text-signal-dim font-mono-label text-[11px] underline underline-offset-4">
+                      Read the post
+                    </span>
                   </div>
-                  <h3 className="font-display text-lg font-semibold mb-3 leading-snug">
-                    {post.title}
-                  </h3>
-                  <p className="text-graphite text-sm leading-relaxed">
-                    {post.excerpt}
-                  </p>
                 </article>
               </Reveal>
-            ))}
-          </div>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                {rest.map((post, i) => (
+                  <Reveal key={post.id} delay={i * 100}>
+                    <article className="border border-line-soft rounded-2xl p-7 h-full hover:border-signal transition-colors">
+                      <div className="flex items-center gap-3 font-mono-label text-[12px] text-signal-dim mb-4">
+                        <span>{post.tag}</span>
+                        <span className="text-graphite">{post.date}</span>
+                      </div>
+                      <h3 className="font-display text-lg font-semibold mb-3 leading-snug">
+                        {post.title}
+                      </h3>
+                      <p className="text-graphite text-sm leading-relaxed">
+                        {post.excerpt}
+                      </p>
+                    </article>
+                  </Reveal>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
     </div>

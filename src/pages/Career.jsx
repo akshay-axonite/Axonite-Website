@@ -1,6 +1,7 @@
+import { useState } from "react";
 import { useParallax } from "../hooks/useParallax";
 import Reveal from "../components/Reveal";
-import { jobs } from "../data/content";
+import { getJobs } from "../lib/store";
 
 const perks = [
   { label: "Health cover", desc: "For you and your immediate family, from day one." },
@@ -11,6 +12,7 @@ const perks = [
 
 export default function Career() {
   const bgRef = useParallax(-0.12);
+  const [jobs] = useState(() => getJobs());
 
   return (
     <div>
@@ -40,13 +42,20 @@ export default function Career() {
           <Reveal>
             <p className="font-mono-label text-[14px] text-signal-dim mb-4">Open roles</p>
             <h2 className="font-display text-3xl md:text-4xl font-semibold max-w-xl">
-              Currently hiring for four positions.
+              {jobs.length > 0
+                ? `Currently hiring for ${jobs.length} position${jobs.length === 1 ? "" : "s"}.`
+                : "No open roles right now."}
             </h2>
           </Reveal>
 
           <div className="mt-12 divide-y divide-line-soft border-t border-b border-line-soft">
+            {jobs.length === 0 && (
+              <p className="py-8 text-sm text-graphite">
+                Check back soon, or write to us anyway below.
+              </p>
+            )}
             {jobs.map((job, i) => (
-              <Reveal key={job.title} delay={i * 80}>
+              <Reveal key={job.id} delay={i * 80}>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-7">
                   <div>
                     <h3 className="font-display text-xl font-semibold mb-1.5">

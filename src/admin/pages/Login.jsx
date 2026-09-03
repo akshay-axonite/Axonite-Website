@@ -24,9 +24,19 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen bg-ink flex items-center justify-center px-6">
       <div className="w-full max-w-sm bg-white rounded-2xl p-8">
-        <img src="/logo-landscape.png" alt="Axonite" className="h-9 mb-8" />
-        <h1 className="font-display text-2xl font-semibold mb-1">Admin sign in</h1>
-        <p className="text-graphite text-sm mb-6">Restricted to Axonite staff.</p>
+        {/* Logo - centered */}
+        <div className="flex justify-center  ">
+          <img
+            src="/logo-landscape.png"
+            alt="Axonite"
+            className="w-full max-w-[200px] h-auto"
+          />
+        </div>
+
+        <div className=" mb-6">
+          <h1 className="font-display text-2xl font-semibold mb-1">Admin sign in</h1>
+          <p className="text-graphite text-sm">Restricted to Axonite staff.</p>
+        </div>
 
         {error && (
           <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-4">

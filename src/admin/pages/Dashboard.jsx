@@ -26,7 +26,7 @@ export default function AdminDashboard() {
         <StatCard label="Open roles" value={jobCount} />
       </div>
 
-      <div className="bg-white border border-line-soft rounded-2xl p-6">
+      {/* <div className="bg-white border border-line-soft rounded-2xl p-6">
         <h2 className="font-display text-lg font-semibold mb-1">Most viewed pages</h2>
         <p className="text-xs text-graphite mb-5">Recorded on this device — see note below.</p>
         {topPages.length === 0 ? (
@@ -43,7 +43,7 @@ export default function AdminDashboard() {
             ))}
           </ul>
         )}
-      </div>
+      </div> */}
 
       <div className="bg-signal/5 border border-line-soft rounded-2xl p-6 mt-6">
         <p className="text-xs text-graphite leading-relaxed max-w-2xl">

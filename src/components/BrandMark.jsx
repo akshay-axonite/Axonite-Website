@@ -1,12 +1,12 @@
-const BrandMark = ({ size = 48, className = "", textClassName = "text-paper" }) => {
+const BrandMark = ({  className = "", textClassName = "text-paper" }) => {
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <img
-        src="/logo.png"
+        src="/log.png"
         alt="Axonite"
         style={{ 
-          height: `${size}px`, 
-          minHeight: `${size}px`,
+          height: "45px", 
+          minHeight: "45px",
           width: "auto" 
         }}
         className="block shrink-0 object-contain"

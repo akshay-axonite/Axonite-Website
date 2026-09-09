@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { getBlogPosts, saveBlogPost, deleteBlogPost } from "../../lib/store";
+
+const API_BASE_URL = "http://localhost:5000/api";
 
 const emptyForm = {
   title: "",
   tag: "",
-  date: "",
   excerpt: "",
   image: "",
   imageName: "",
@@ -25,24 +25,40 @@ function fileToBase64(file) {
   });
 }
 
-function formatBytes(bytes) {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
 export default function AdminBlog() {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState(null);
   const [imageError, setImageError] = useState("");
   const [videoError, setVideoError] = useState("");
+  const [apiError, setApiError] = useState("");
 
-  function refresh() {
-    setPosts(getBlogPosts());
+  async function refresh() {
+    setLoading(true);
+    setApiError("");
+    try {
+      const response = await fetch(`${API_BASE_URL}/blog`);
+      const isJson = response.headers.get("content-type")?.includes("application/json");
+      const result = isJson ? await response.json() : await response.text();
+
+      if (!response.ok) {
+        throw new Error(result.details || result.error || "Failed to load posts");
+      }
+
+      setPosts(result || []);
+    } catch (err) {
+      console.error(err);
+      setApiError(err.message || "Failed to load blog posts");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  useEffect(refresh, []);
+  useEffect(() => {
+    refresh();
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -75,7 +91,7 @@ export default function AdminBlog() {
     setVideoError("");
 
     if (file.size > MAX_VIDEO_BYTES) {
-      setVideoError(`Video must be 10MB or smaller (yours is ${formatBytes(file.size)}).`);
+      setVideoError("Video must be 10MB or smaller.");
       e.target.value = "";
       return;
     }
@@ -98,41 +114,81 @@ export default function AdminBlog() {
     setVideoError("");
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!form.title.trim()) return;
-    saveBlogPost({ ...form, id: editingId || undefined });
-    setForm(emptyForm);
-    setEditingId(null);
-    setImageError("");
-    setVideoError("");
-    refresh();
+
+    setSubmitting(true);
+    setApiError("");
+
+    try {
+      const url = editingId ? `${API_BASE_URL}/blog/${editingId}` : `${API_BASE_URL}/blog`;
+      const method = editingId ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: form.title,
+          tag: form.tag,
+          excerpt: form.excerpt,
+          image: form.image,
+          video: form.video,
+        }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.details || result.error || "Failed to save post");
+      }
+
+      setForm(emptyForm);
+      setEditingId(null);
+      setImageError("");
+      setVideoError("");
+      await refresh();
+    } catch (err) {
+      console.error(err);
+      setApiError(err.message || "Failed to submit post");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   function handleEdit(post) {
     setForm({
       title: post.title || "",
       tag: post.tag || "",
-      date: post.date || "",
       excerpt: post.excerpt || "",
       image: post.image || "",
-      imageName: post.imageName || "",
+      imageName: post.image ? "Current Image" : "",
       video: post.video || "",
-      videoName: post.videoName || "",
+      videoName: post.video ? "Current Video" : "",
     });
     setEditingId(post.id);
     setImageError("");
     setVideoError("");
+    setApiError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function handleDelete(id) {
+  async function handleDelete(id) {
     if (!confirm("Delete this post? This can't be undone.")) return;
-    deleteBlogPost(id);
-    refresh();
-    if (editingId === id) {
-      setForm(emptyForm);
-      setEditingId(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/blog/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(result.details || result.error || "Failed to delete post");
+      }
+      await refresh();
+      if (editingId === id) {
+        setForm(emptyForm);
+        setEditingId(null);
+      }
+    } catch (err) {
+      alert(err.message || "Could not delete post");
     }
   }
 
@@ -141,6 +197,7 @@ export default function AdminBlog() {
     setEditingId(null);
     setImageError("");
     setVideoError("");
+    setApiError("");
   }
 
   return (
@@ -148,33 +205,30 @@ export default function AdminBlog() {
       <p className="font-mono-label text-[11px] text-signal-dim mb-2">Content</p>
       <h1 className="font-display text-3xl font-semibold mb-8">Blog posts</h1>
 
+      {apiError && (
+        <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl">
+          {apiError}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="bg-white border border-line-soft rounded-2xl p-4 sm:p-6 mb-10 space-y-4">
         <h2 className="font-display text-lg font-semibold">
           {editingId ? "Edit post" : "New post"}
         </h2>
 
-        {/* Title + Date side by side */}
+        {/* Title + Subtitle side by side */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="Title" name="title" value={form.title} onChange={handleChange} required />
           <Field
-            label="Date label"
-            name="date"
-            value={form.date}
+            label="Tag / Subtitle"
+            name="tag"
+            value={form.tag}
             onChange={handleChange}
-            placeholder="Sep 2026"
+            placeholder="Engineering, Design, Product…"
           />
         </div>
 
-        <Field
-          label="Tag"
-          name="tag"
-          value={form.tag}
-          onChange={handleChange}
-          placeholder="Engineering, Design, Product…"
-        />
-
-       
-        {/* Image + Video side by side */}
+        {/* Media Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="font-mono-label text-[10px] text-graphite block mb-2">
@@ -191,11 +245,11 @@ export default function AdminBlog() {
               <div className="mt-3 flex items-center gap-3">
                 <img
                   src={form.image}
-                  alt={form.imageName}
+                  alt="Preview"
                   className="w-16 h-16 object-cover rounded-lg border border-line-soft"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs truncate">{form.imageName}</p>
+                  <p className="text-xs truncate">{form.imageName || "Image ready"}</p>
                   <button
                     type="button"
                     onClick={removeImage}
@@ -223,7 +277,7 @@ export default function AdminBlog() {
               <div className="mt-3">
                 <video src={form.video} controls className="w-full max-h-32 rounded-lg border border-line-soft" />
                 <div className="flex items-center justify-between mt-2">
-                  <p className="text-xs truncate">{form.videoName}</p>
+                  <p className="text-xs truncate">{form.videoName || "Video ready"}</p>
                   <button
                     type="button"
                     onClick={removeVideo}
@@ -236,7 +290,8 @@ export default function AdminBlog() {
             )}
           </div>
         </div>
-         {/* Content */}
+
+        {/* Content */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className="font-mono-label text-[10px] text-graphite">Content</label>
@@ -258,14 +313,14 @@ export default function AdminBlog() {
           />
         </div>
 
-
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             type="submit"
-            className="text-white font-mono-label text-[11px] px-6 py-3 rounded-full transition-opacity hover:opacity-90"
+            disabled={submitting}
+            className="text-white font-mono-label text-[11px] px-6 py-3 rounded-full transition-opacity hover:opacity-90 disabled:opacity-50"
             style={{ background: "linear-gradient(90deg, #9B4FC9, #3E5FE0, #29B6F6)" }}
           >
-            {editingId ? "Save changes" : "Publish post"}
+            {submitting ? "Saving..." : editingId ? "Save changes" : "Publish post"}
           </button>
           {editingId && (
             <button
@@ -279,42 +334,52 @@ export default function AdminBlog() {
         </div>
       </form>
 
+      {/* Posts List */}
       <div className="bg-white border border-line-soft rounded-2xl divide-y divide-line-soft">
-        {posts.length === 0 && <p className="p-6 text-sm text-graphite">No posts yet.</p>}
-        {posts.map((post) => (
-          <div key={post.id} className="flex items-center justify-between gap-4 p-5">
-            <div className="flex items-center gap-3 min-w-0">
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-10 h-10 object-cover rounded-lg border border-line-soft shrink-0"
-                />
-              )}
-              <div className="min-w-0">
-                <p className="font-display font-semibold truncate">{post.title}</p>
-                <p className="text-xs text-graphite mt-1">
-                  {post.tag} · {post.date}
-                  {post.video && " · has video"}
-                </p>
+        {loading ? (
+          <p className="p-6 text-sm text-graphite">Loading posts...</p>
+        ) : posts.length === 0 ? (
+          <p className="p-6 text-sm text-graphite">No posts yet.</p>
+        ) : (
+          posts.map((post) => (
+            <div key={post.id} className="flex items-center justify-between gap-4 p-5">
+              <div className="flex items-center gap-3 min-w-0">
+                {post.image && (
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-10 h-10 object-cover rounded-lg border border-line-soft shrink-0"
+                  />
+                )}
+                <div className="min-w-0">
+                  <p className="font-display font-semibold truncate">{post.title}</p>
+                  <p className="text-xs text-graphite mt-1 flex items-center gap-1.5 flex-wrap">
+                    {/* Automatically shown formatted system date */}
+                    <span className="inline-flex items-center bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-[11px] font-medium font-mono">
+                      {post.formatted_date || "Today"}
+                    </span>
+                    {post.tag && <span>· {post.tag}</span>}
+                    {post.video && <span>· has video</span>}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                <button
+                  onClick={() => handleEdit(post)}
+                  className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft hover:border-signal transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(post.id)}
+                  className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft text-red-600 hover:border-red-400 transition-colors"
+                >
+                  Delete
+                </button>
               </div>
             </div>
-            <div className="flex gap-2 shrink-0">
-              <button
-                onClick={() => handleEdit(post)}
-                className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft hover:border-signal transition-colors"
-              >
-                Edit
-              </button>
-              <button
-                onClick={() => handleDelete(post.id)}
-                className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft text-red-600 hover:border-red-400 transition-colors"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );

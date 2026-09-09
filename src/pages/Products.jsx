@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { useParallax } from "../hooks/useParallax";
 import Reveal from "../components/Reveal";
 import SignalTrace from "../components/SignalTrace";
@@ -8,19 +9,41 @@ export default function Products() {
   const bgRef = useParallax(-0.12);
   const gridRef = useParallax(0.06);
 
+  const containerRef = useRef(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      const totalHeight = rect.height - windowHeight;
+      const currentScroll = windowHeight - rect.top;
+      
+      let progress = currentScroll / totalHeight;
+      progress = Math.max(0, Math.min(1, progress));
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <div>
+      {/* Hero Section */}
       <section className="relative bg-ink grain overflow-hidden pt-40 pb-24">
         <div
           ref={bgRef}
-          data-parallax
           className="absolute -top-32 -left-24 w-[560px] h-[560px] rounded-full opacity-[0.14]"
           style={{ background: "radial-gradient(circle, #3E5FE0, transparent 70%)" }}
           aria-hidden="true"
         />
         <div
           ref={gridRef}
-          data-parallax
           className="absolute inset-0 opacity-[0.06]"
           style={{
             backgroundImage:
@@ -41,55 +64,97 @@ export default function Products() {
         </div>
       </section>
 
-      {products.map((p, i) => (
-        <section
-          key={p.name}
-          className={i % 2 === 0 ? "bg-paper py-24" : "bg-white py-24"}
-        >
-          <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-14 items-center">
-            <Reveal className={i % 2 === 1 ? "md:order-2" : ""}>
-              <p className="font-mono-label text-[12px] text-signal-dim mb-4">
-                {p.tag}
-              </p>
-              <h2 className="font-display text-3xl md:text-4xl font-semibold mb-4">
-                {p.name}
-              </h2>
-              <p className="text-graphite leading-relaxed mb-5 max-w-lg">
-                {p.desc}
-              </p>
-              <p className="text-sm text-ink/70 mb-6 max-w-lg">
-                <span className="font-mono-label text-[12px] text-signal-dim block mb-1">
-                  Best for
-                </span>
-                {p.idealFor}
-              </p>
-              <div className="flex gap-3">
-                <Link
-                  to="/contact"
-                  className="inline-flex bg-ink text-paper font-mono-label text-[11px] px-6 py-3 rounded-full hover:bg-signal hover:text-white transition-colors"
-                >
-                  Request a demo
-                </Link>
-              </div>
-            </Reveal>
+      {/* Scroll-Driven Winding Spiral Path Section */}
+      <section ref={containerRef} className="relative bg-paper py-32 overflow-hidden">
+        
+        {/* Background SVG Winding Spiral Track */}
+        <div className="absolute inset-0 pointer-events-none flex justify-center items-center opacity-15">
+          <svg className="w-full h-full" viewBox="0 0 600 1200" fill="none" preserveAspectRatio="none">
+            <path
+              d="M300 0 C 100 200, 100 400, 300 600 C 500 800, 500 1000, 300 1200"
+              stroke="#3E5FE0"
+              strokeWidth="4"
+              strokeDasharray="8 8"
+            />
+            <path
+              d="M300 0 C 100 200, 100 400, 300 600 C 500 800, 500 1000, 300 1200"
+              stroke="#3E5FE0"
+              strokeWidth="4"
+              strokeDashoffset={`${1000 - scrollProgress * 1000}`}
+              strokeDasharray="1000"
+            />
+          </svg>
+        </div>
 
-            <Reveal delay={100} className={i % 2 === 1 ? "md:order-1" : ""}>
-              <div className="bg-ink rounded-2xl p-8 grain relative overflow-hidden">
-                <SignalTrace className="w-full h-12 mb-6" variant="light" />
-                <ul className="space-y-4">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex gap-3 text-paper text-sm leading-relaxed">
-                      <span className="text-signal mt-1">—</span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-      ))}
+        <div className="max-w-5xl mx-auto px-6 relative space-y-36">
+          {products.map((p, i) => {
+            const isLeft = i % 2 === 0;
+            return (
+              <div 
+                key={p.name} 
+                className={`relative flex flex-col md:flex-row items-center gap-12 ${
+                  isLeft ? "md:flex-row" : "md:flex-row-reverse"
+                }`}
+              >
+                {/* Product Content Card */}
+                <div className="w-full md:w-1/2">
+                  <Reveal>
+                    <div className="bg-ink rounded-3xl p-8 grain shadow-2xl border border-white/5 relative overflow-hidden">
+                    
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="font-mono-label text-[11px] px-3 py-1 rounded-full bg-signal/20 text-paper ">
+                          0{i + 1} // {p.tag}
+                        </span>
+                        <div className="w-2.5 h-2.5 rounded-full bg-signal animate-pulse" />
+                        
+                      </div>
+                      <SignalTrace className="w-full h-8 mb-3" variant="light" />
+                      {/* <h2 className="font-display text-2xl md:text-3xl font-semibold mb-3 text-paper">
+                        {p.name}
+                      </h2> */}
+                      <p className="text-mist leading-relaxed text-sm mb-4">
+                        {p.desc}
+                      </p>
 
+                      {/* <div className="bg-white/5 rounded-xl p-4 mb-6">
+                        <SignalTrace className="w-full h-8 mb-3" variant="light" />
+                        <ul className="space-y-2">
+                          {p.features.map((f) => (
+                            <li key={f} className="flex gap-2 text-paper text-xs leading-relaxed">
+                              <span className="text-signal">—</span>
+                              <span>{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div> */}
+
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-white/10">
+                        <span className="text-xs text-mist/70">Best for: {p.idealFor}</span>
+                        <Link
+                          to="/contact"
+                          className="inline-flex bg-signal text-white font-mono-label text-[10px] px-5 py-2.5 rounded-full hover:bg-white hover:text-ink transition-colors justify-center"
+                        >
+                          Request demo
+                        </Link>
+                      </div>
+                    </div>
+                  </Reveal>
+                </div>
+
+                {/* Center Spiral Node Graphic */}
+                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-ink border-4 border-signal items-center justify-center shadow-lg z-20">
+                  <span className="font-mono-label text-xs text-white">0{i + 1}</span>
+                </div>
+
+                {/* Balancing Empty Spacer for Flex Alignment */}
+                <div className="hidden md:block w-1/2" />
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Footer Call to Action */}
       <section className="bg-ink py-20">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <Reveal>

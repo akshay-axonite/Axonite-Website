@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { blogPosts as defaultBlogPosts, jobs as defaultJobs } from "../data/content";
+
+const API_BASE_URL = "http://localhost:5000/api";
 
 const KEYS = {
   blog: "axonite_blog_posts",
@@ -7,11 +9,10 @@ const KEYS = {
   pageviews: "axonite_pageviews",
   sessions: "axonite_sessions",
   breakdown: "axonite_page_breakdown",
-  auth: "axonite_admin_auth",
+  auth: "admin_token",
+  adminUser: "admin_user",
+  applications: "axonite_applications",
 };
-
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "axonite2026";
 
 // --- Low-level storage utilities ---
 
@@ -28,7 +29,7 @@ const write = (key, value) => {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // Fail silently when storage is restricted (e.g., private window)
+    // Fail silently when storage is restricted
   }
 };
 
@@ -53,7 +54,54 @@ if (typeof window !== "undefined") {
   initStore();
 }
 
-// --- Standalone Functions (preserves backward compatibility) ---
+// --- Live Backend Auth Utilities ---
+
+export const isAuthed = () => {
+  if (typeof window === "undefined") return false;
+  return Boolean(localStorage.getItem(KEYS.auth));
+};
+
+export const getAdminUser = () => {
+  return read(KEYS.adminUser, null);
+};
+
+export const login = async (identifier, password) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        identifier: identifier.trim(),
+        password,
+      }),
+    });
+
+    const isJson = response.headers.get("content-type")?.includes("application/json");
+    const data = isJson ? await response.json() : await response.text();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Incorrect username or password.");
+    }
+
+    localStorage.setItem(KEYS.auth, data.token);
+    write(KEYS.adminUser, data.admin);
+    return { success: true, admin: data.admin, token: data.token };
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+};
+
+export const logout = () => {
+  localStorage.removeItem(KEYS.auth);
+  localStorage.removeItem(KEYS.adminUser);
+  if (typeof window !== "undefined") {
+    window.location.href = "/admin/login";
+  }
+};
+
+// --- Blog & Job Storage ---
 
 export const getBlogPosts = () => read(KEYS.blog, []);
 
@@ -100,6 +148,8 @@ export const deleteJob = (id) => {
   write(KEYS.jobs, filtered);
 };
 
+// --- Analytics Tracking ---
+
 export const trackPageView = (path) => {
   const total = read(KEYS.pageviews, 0) + 1;
   write(KEYS.pageviews, total);
@@ -120,21 +170,48 @@ export const getStats = () => ({
   breakdown: read(KEYS.breakdown, {}),
 });
 
-export const login = (username, password) => {
-  if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-    sessionStorage.setItem(KEYS.auth, "1");
-    return true;
-  }
-  return false;
+// --- Demo Applications Fallback ---
+
+const defaultApplications = [
+  {
+    id: "app-1",
+    qualification: "B.Tech in Computer Science",
+    candidateName: "Rohan Sharma",
+    email: "rohan.sharma@example.com",
+    role: "Frontend Engineer",
+    appliedDate: "2026-08-28",
+    status: "New",
+    interviewDate: null,
+    resumeLink: "#",
+  },
+  {
+    id: "app-2",
+    qualification: "B.Tech in Computer Science",
+    candidateName: "Priya Patel",
+    email: "priya.p@example.com",
+    role: "Product Designer",
+    appliedDate: "2026-08-30",
+    status: "New",
+    interviewDate: null,
+    resumeLink: "#",
+  },
+];
+
+export const getApplications = () => {
+  seedIfEmpty(KEYS.applications, defaultApplications);
+  return read(KEYS.applications, defaultApplications);
 };
 
-export const logout = () => {
-  sessionStorage.removeItem(KEYS.auth);
+export const updateApplicationStatus = (id, status, interviewDate = null) => {
+  const apps = getApplications();
+  const updated = apps.map((app) =>
+    app.id === id ? { ...app, status, interviewDate } : app
+  );
+  write(KEYS.applications, updated);
+  return updated;
 };
 
-export const isAuthed = () => sessionStorage.getItem(KEYS.auth) === "1";
-
-// --- React Context Provider (JSX Integration) ---
+// --- React Context Provider ---
 
 const StoreContext = createContext(null);
 
@@ -142,6 +219,10 @@ export const AdminStoreProvider = ({ children }) => {
   const [blogPosts, setBlogPostsState] = useState(getBlogPosts);
   const [jobs, setJobsState] = useState(getJobs);
   const [authenticated, setAuthenticated] = useState(isAuthed);
+
+  useEffect(() => {
+    setAuthenticated(isAuthed());
+  }, []);
 
   const handleSavePost = (post) => {
     const saved = saveBlogPost(post);
@@ -165,10 +246,10 @@ export const AdminStoreProvider = ({ children }) => {
     setJobsState(getJobs());
   };
 
-  const handleLogin = (u, p) => {
-    const success = login(u, p);
-    setAuthenticated(success);
-    return success;
+  const handleLogin = async (u, p) => {
+    const res = await login(u, p);
+    setAuthenticated(res.success);
+    return res;
   };
 
   const handleLogout = () => {
@@ -203,47 +284,4 @@ export const useAdminStore = () => {
     throw new Error("useAdminStore must be used within an AdminStoreProvider");
   }
   return context;
-};
-
-// Add to KEYS in src/lib/store.jsx:
-// applications: "axonite_applications",
-
-// Seed data for demo applications
-const defaultApplications = [
-  {
-    id: "app-1",
-    qulifications: "B.Tech in Computer Science",
-    candidateName: "Rohan Sharma",
-    email: "rohan.sharma@example.com",
-    role: "Frontend Engineer",
-    appliedDate: "2026-08-28",
-    status: "new", // "Pending" | "Selected" | "Rejected" | "Scheduled"
-    interviewDate: null,
-    resumeLink: "#"
-  },
-  {
-    id: "app-2",
-    qulifications: "B.Tech in Computer Science",
-    candidateName: "Priya Patel",
-    email: "priya.p@example.com",
-    role: "Product Designer",
-    appliedDate: "2026-08-30",
-    status: "new",
-    interviewDate: null,
-    resumeLink: "#"
-  }
-];
-
-export const getApplications = () => {
-  seedIfEmpty(KEYS.applications, defaultApplications);
-  return read(KEYS.applications, defaultApplications);
-};
-
-export const updateApplicationStatus = (id, status, interviewDate = null) => {
-  const apps = getApplications();
-  const updated = apps.map((app) =>
-    app.id === id ? { ...app, status, interviewDate } : app
-  );
-  write(KEYS.applications, updated);
-  return updated;
 };

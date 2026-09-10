@@ -1,23 +1,61 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login, isAuthed } from "../../lib/store";
+
+const API_BASE_URL = "http://localhost:5000/api";
 
 export default function AdminLogin() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Check if token is already present
   useEffect(() => {
-    if (isAuthed()) navigate("/admin", { replace: true });
+    const token = localStorage.getItem("admin_token");
+    if (token) {
+      navigate("/admin", { replace: true });
+    }
   }, [navigate]);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (login(username, password)) {
-      navigate("/admin");
-    } else {
-      setError("Incorrect username or password.");
+    if (!username.trim() || !password) {
+      setError("Please enter your username and password.");
+      return;
+    }
+
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          identifier: username.trim(),
+          password: password,
+        }),
+      });
+
+      const isJson = response.headers.get("content-type")?.includes("application/json");
+      const data = isJson ? await response.json() : await response.text();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Incorrect username or password.");
+      }
+
+      // Store auth session
+      localStorage.setItem("admin_token", data.token);
+      localStorage.setItem("admin_user", JSON.stringify(data.admin));
+
+      navigate("/admin", { replace: true });
+    } catch (err) {
+      setError(err.message || "Failed to sign in. Please try again.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -25,7 +63,7 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-ink flex items-center justify-center px-6">
       <div className="w-full max-w-sm bg-white rounded-2xl p-8">
         {/* Logo - centered */}
-        <div className="flex justify-center  ">
+        <div className="flex justify-center mb-6">
           <img
             src="/logo-landscape.png"
             alt="Axonite"
@@ -33,7 +71,7 @@ export default function AdminLogin() {
           />
         </div>
 
-        <div className=" mb-6">
+        <div className="mb-6">
           <h1 className="font-display text-2xl font-semibold mb-1">Admin sign in</h1>
           <p className="text-graphite text-sm">Restricted to Axonite staff.</p>
         </div>
@@ -47,15 +85,20 @@ export default function AdminLogin() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="font-mono-label text-[10px] text-graphite block mb-2">
-              Username
+              Username or Email
             </label>
             <input
+              type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
-              className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors"
+              required
+              disabled={loading}
+              placeholder="Enter username or email"
+              className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors disabled:opacity-50"
             />
           </div>
+
           <div>
             <label className="font-mono-label text-[10px] text-graphite block mb-2">
               Password
@@ -64,15 +107,20 @@ export default function AdminLogin() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors"
+              required
+              disabled={loading}
+              placeholder="Enter password"
+              className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors disabled:opacity-50"
             />
           </div>
+
           <button
             type="submit"
-            className="w-full text-white font-mono-label text-[11px] px-6 py-3.5 rounded-full transition-opacity hover:opacity-90"
+            disabled={loading}
+            className="w-full text-white font-mono-label text-[11px] px-6 py-3.5 rounded-full transition-opacity hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
             style={{ background: "linear-gradient(90deg, #9B4FC9, #3E5FE0, #29B6F6)" }}
           >
-            Sign in
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>

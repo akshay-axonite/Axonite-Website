@@ -15,12 +15,12 @@ export default function AdminLayout() {
   const location = useLocation();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
-  // Close the mobile drawer automatically whenever the route changes
+  // Close mobile drawer on route change
   useEffect(() => {
     setIsMobileNavOpen(false);
   }, [location.pathname]);
 
-  // Prevent background scroll while the mobile drawer is open
+  // Prevent background scroll while mobile drawer is open
   useEffect(() => {
     document.body.style.overflow = isMobileNavOpen ? "hidden" : "";
     return () => {
@@ -40,7 +40,7 @@ export default function AdminLayout() {
   const sidebarContent = (
     <>
       <div className="px-6 py-6 border-b border-line shrink-0">
-        <BrandMark size={24} />
+        <BrandMark height={40} />
         <p className="font-mono-label text-[10px] text-mist mt-3">Admin panel</p>
       </div>
 
@@ -82,25 +82,23 @@ export default function AdminLayout() {
 
   return (
     <div className="h-screen bg-paper flex overflow-hidden">
-      {/* Desktop sidebar — sticky, always visible from md breakpoint up */}
+      {/* Desktop sidebar */}
       <aside className="hidden md:flex w-60 bg-ink text-paper flex-col shrink-0 h-screen sticky top-0 border-r border-line select-none">
         {sidebarContent}
       </aside>
 
-      {/* Mobile drawer — slides in over content, only rendered interactive below md */}
+      {/* Mobile drawer */}
       <div
         className={`md:hidden fixed inset-0 z-40 transition-opacity duration-200 ${
           isMobileNavOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
         aria-hidden={!isMobileNavOpen}
       >
-        {/* Backdrop */}
         <div
           className="absolute inset-0 bg-black/50"
           onClick={() => setIsMobileNavOpen(false)}
         />
 
-        {/* Drawer panel */}
         <aside
           className={`absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-ink text-paper flex flex-col border-r border-line select-none transform transition-transform duration-200 ${
             isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
@@ -110,10 +108,10 @@ export default function AdminLayout() {
         </aside>
       </div>
 
-      {/* Main column: mobile top bar + scrollable content */}
+      {/* Main column */}
       <div className="flex-1 min-w-0 h-screen flex flex-col overflow-hidden">
-        {/* Mobile top bar — hidden from md breakpoint up */}
-        <header className="md:hidden flex items-center justify-between px-4 py-3 border-b border-line bg-paper shrink-0">
+        {/* Mobile top bar */}
+        <header className="md:hidden flex items-center justify-between px-4 py-2.5 border-b border-line bg-paper shrink-0">
           <button
             type="button"
             onClick={() => setIsMobileNavOpen(true)}
@@ -129,13 +127,16 @@ export default function AdminLayout() {
               />
             </svg>
           </button>
+
           <span className="text-sm font-medium text-ink truncate">
             {activeLabel || "Admin panel"}
           </span>
-          <BrandMark size={20} />
+
+          {/* Uses compact icon in the mobile top bar */}
+          <BrandMark compact={true} height={32} />
         </header>
 
-        {/* Scrollable content pane */}
+        {/* Scrollable content */}
         <main className="flex-1 min-w-0 overflow-y-auto">
           <Outlet />
         </main>

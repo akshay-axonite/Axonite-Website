@@ -20,7 +20,7 @@ export default function AdminDashboard() {
       <h1 className="font-display text-3xl font-semibold mb-8">Dashboard</h1>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
-        <StatCard label="Page views" value={stats.pageviews} />
+        {/* <StatCard label="Page views" value={stats.pageviews} /> */}
         <StatCard label="Visits" value={stats.sessions} />
         <StatCard label="Blog posts" value={postCount} />
         <StatCard label="Open roles" value={jobCount} />

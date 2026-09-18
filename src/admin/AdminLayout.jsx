@@ -8,6 +8,7 @@ const links = [
   { to: "/admin/blog", label: "Blog posts" },
   { to: "/admin/careers", label: "Careers" },
   { to: "/admin/applications", label: "Applications" },
+  { to: "/admin/knowledge-base", label: "AI Knowledge Base" }, // <-- Added
 ];
 
 export default function AdminLayout() {
@@ -132,7 +133,6 @@ export default function AdminLayout() {
             {activeLabel || "Admin panel"}
           </span>
 
-          {/* Uses compact icon in the mobile top bar */}
           <BrandMark compact={true} height={32} />
         </header>
 

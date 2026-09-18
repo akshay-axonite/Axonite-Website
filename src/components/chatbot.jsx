@@ -1,28 +1,48 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "http://localhost:5000/api";
 
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, sender: 'bot', text: 'Hi! How can I help you today?' }
+    {
+      id: 1,
+      sender: 'bot',
+      text: "Hello! I'm Axonite's AI assistant. Ask me anything about our services, tech stacks, or company solutions."
+    }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   useEffect(() => {
-    if (isOpen) scrollToBottom();
+    if (isOpen) {
+      scrollToBottom();
+      inputRef.current?.focus();
+      setHasInteracted(true);
+    }
   }, [messages, isTyping, isOpen]);
+
+  const handleClearHistory = () => {
+    setMessages([
+      {
+        id: Date.now(),
+        sender: 'bot',
+        text: 'Conversation reset. How can I help you today?'
+      }
+    ]);
+  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     const query = input.trim();
-    if (!query) return;
+    if (!query || isTyping) return;
 
     const userMessage = {
       id: Date.now(),
@@ -35,7 +55,7 @@ export default function Chatbot() {
     setIsTyping(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/chat`, {
+      const response = await fetch(`${API_BASE_URL}/chatbot/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -44,7 +64,7 @@ export default function Chatbot() {
       });
 
       if (!response.ok) {
-        throw new Error('Server returned an error');
+        throw new Error(`Server status ${response.status}`);
       }
 
       const data = await response.json();
@@ -52,8 +72,10 @@ export default function Chatbot() {
       const botResponse = {
         id: Date.now() + 1,
         sender: 'bot',
-        text: data.reply
+        text: data.reply || "I didn't receive a response from the assistant.",
+        sources: data.sources || []
       };
+
       setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
       setMessages((prev) => [
@@ -61,7 +83,7 @@ export default function Chatbot() {
         {
           id: Date.now() + 1,
           sender: 'bot',
-          text: '⚠️ Unable to connect to the assistant server. Please check your backend.'
+          text: 'Unable to reach the assistant server. Please reach out to info@axonite.net.'
         }
       ]);
     } finally {
@@ -70,82 +92,121 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-      {/* Compact Chat Popup */}
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end select-none">
+      {/* Proactive Help Tooltip (Hidden once opened) */}
+      {!isOpen && !hasInteracted && (
+        <div className="mb-2 mr-1 flex items-center gap-2 bg-white text-gray-900 border border-blue-200 px-3 py-1.5 rounded-full shadow-lg text-xs font-semibold animate-bounce">
+          <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping"></span>
+          Need help? Ask our AI
+        </div>
+      )}
+
+      {/* Chat Window */}
       {isOpen && (
-        <div className="mb-3 flex flex-col h-[380px] w-72 sm:w-80 bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden transition-all">
+        <div className="mb-3.5 flex flex-col h-[500px] w-80 sm:w-96 bg-white border-2 border-blue-500/20 rounded-2xl shadow-2xl overflow-hidden transition-all animate-in fade-in slide-in-from-bottom-4 duration-200">
           
-          {/* Header */}
-          <header className="flex items-center justify-between px-3.5 py-2.5 bg-indigo-600 text-white">
-            <div className="flex items-center gap-2">
+          {/* Header - Vivid Electric Blue */}
+          <header className="flex items-center justify-between px-4 py-3.5 bg-blue-600 text-white shadow-sm">
+            <div className="flex items-center gap-2.5">
               <div className="relative">
-                <div className="w-6 h-6 rounded-full bg-indigo-800 flex items-center justify-center font-bold text-[10px]">
+                <div className="w-8 h-8 rounded-xl bg-white text-blue-600 flex items-center justify-center font-bold text-xs shadow-xs">
                   AI
                 </div>
-                <span className="absolute bottom-0 right-0 w-1.5 h-1.5 bg-green-400 border border-indigo-600 rounded-full"></span>
+                <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-400 border-2 border-blue-600 rounded-full"></span>
               </div>
-              <h2 className="font-medium text-xs">Assistant</h2>
+              <div>
+                <h2 className="font-semibold text-sm text-white leading-tight">Axonite Assistant</h2>
+                <p className="text-[11px] text-blue-100 font-medium">Online • Instant Answers</p>
+              </div>
             </div>
 
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-indigo-200 hover:text-white p-0.5 rounded transition-colors focus:outline-none"
-              aria-label="Close Chat"
-            >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleClearHistory}
+                title="Reset Conversation"
+                className="text-blue-200 hover:text-white hover:bg-blue-700/50 p-1.5 rounded-lg transition-colors text-xs"
+              >
+                ↻
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="text-blue-200 hover:text-white hover:bg-blue-700/50 p-1.5 rounded-lg transition-colors"
+                aria-label="Close Chat"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </header>
 
-          {/* Message List */}
-          <main className="flex-1 overflow-y-auto p-3 space-y-2.5 bg-gray-50 text-xs">
+          {/* Messages Body */}
+          <main className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50 text-xs">
             {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
               >
                 <div
-                  className={`max-w-[85%] px-3 py-1.5 rounded-xl leading-relaxed whitespace-pre-wrap ${
+                  className={`max-w-[85%] px-3.5 py-2.5 rounded-2xl leading-relaxed whitespace-pre-wrap ${
                     msg.sender === 'user'
-                      ? 'bg-indigo-600 text-white rounded-br-none'
-                      : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-xs'
+                      ? 'bg-blue-600 text-white rounded-br-none shadow-md font-medium'
+                      : 'bg-white text-slate-800 border border-slate-200 rounded-bl-none shadow-sm'
                   }`}
                 >
                   {msg.text}
                 </div>
+
+                {/* Grounded PDF Document Badges */}
+                {msg.sources && msg.sources.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap gap-1 items-center pl-1">
+                    <span className="text-[10px] text-slate-400 font-medium uppercase tracking-wide">Ref:</span>
+                    {msg.sources.map((src, i) => (
+                      <span
+                        key={i}
+                        className="inline-block text-[10px] bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-md font-medium truncate max-w-[150px]"
+                        title={src}
+                      >
+                        📄 {src}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
 
-            {/* Typing Dots */}
+            {/* Typing Indicator */}
             {isTyping && (
-              <div className="flex items-center gap-1 bg-white border border-gray-200 w-fit px-2.5 py-1.5 rounded-xl rounded-bl-none">
-                <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                <span className="w-1 h-1 bg-indigo-500 rounded-full animate-bounce"></span>
+              <div className="flex items-center gap-1.5 bg-white border border-slate-200 w-fit px-3.5 py-2 rounded-2xl rounded-bl-none shadow-sm">
+                <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                <span className="w-2 h-2 bg-blue-600 rounded-full animate-bounce"></span>
               </div>
             )}
 
             <div ref={messagesEndRef} />
           </main>
 
-          {/* Input Area */}
-          <footer className="p-2 bg-white border-t border-gray-100">
-            <form onSubmit={handleSendMessage} className="flex items-center gap-1.5">
+          {/* Input Box */}
+          <footer className="p-3 bg-white border-t border-slate-100">
+            <form onSubmit={handleSendMessage} className="flex items-center gap-2">
               <input
+                ref={inputRef}
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Type a message..."
-                className="flex-1 px-3 py-1.5 text-xs bg-gray-100 border border-transparent rounded-full focus:outline-none focus:bg-white focus:border-indigo-500 transition-all text-gray-800 placeholder-gray-400"
+                placeholder="Ask about pricing, tech, services..."
+                className="flex-1 px-3.5 py-2 text-xs bg-slate-100 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:border-blue-600 transition-all text-slate-800 placeholder-slate-400 font-medium"
               />
               <button
                 type="submit"
                 disabled={!input.trim() || isTyping}
-                className="p-1.5 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-40 transition-colors focus:outline-none"
-                aria-label="Send"
+                className="p-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 transition-colors focus:outline-none shadow-sm cursor-pointer"
+                aria-label="Send message"
               >
-                <svg className="w-3.5 h-3.5 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                 </svg>
               </button>
@@ -154,27 +215,33 @@ export default function Chatbot() {
         </div>
       )}
 
-      {/* Launcher Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-11 h-11 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-md hover:shadow-lg transition-all focus:outline-none"
-        aria-label="Toggle Chat"
-      >
-        {isOpen ? (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        ) : (
-          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-            />
-          </svg>
+      {/* Floating Launcher Button with Pulsing Wave */}
+      <div className="relative">
+        {!isOpen && (
+          <span className="absolute -inset-1 rounded-full bg-blue-500 opacity-60 animate-ping pointer-events-none"></span>
         )}
-      </button>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="relative flex items-center justify-center w-14 h-14 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-xl hover:shadow-blue-500/30 transition-all focus:outline-none cursor-pointer transform hover:scale-105 active:scale-95"
+          aria-label="Toggle Chat"
+        >
+          {isOpen ? (
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+            </svg>
+          ) : (
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+              />
+            </svg>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

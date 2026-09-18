@@ -18,6 +18,7 @@ import AdminBlog from "./admin/pages/BlogManager";
 import AdminCareers from "./admin/pages/CareerManager";
 import ProtectedRoute from "./admin/ProtectedRoute";
 import AdminApplications from "./admin/pages/ApplicationsManager";
+import KnowledgeBase from "./admin/pages/KnowledgeBase";
 import { trackPageView } from "./lib/store";
 
 function ScrollToTop() {
@@ -85,6 +86,7 @@ export default function App() {
           <Route path="blog" element={<AdminBlog />} />
           <Route path="careers" element={<AdminCareers />} />
           <Route path="applications" element={<AdminApplications />} />
+          <Route path="knowledge-base" element={<KnowledgeBase />} />
         </Route>
       </Routes>
     </>

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo, Fragment } from "react";
 
 const API_BASE_URL = "http://localhost:5000/api";
 
-// Map integer user_status to UI string labels
 const mapStatusToString = (statusVal) => {
   if (typeof statusVal === "string" && isNaN(Number(statusVal))) return statusVal;
   switch (Number(statusVal)) {
@@ -23,7 +22,6 @@ const mapStatusToString = (statusVal) => {
   }
 };
 
-// Map status label back to integer for backend persistence
 const mapStringToStatus = (statusStr) => {
   switch (statusStr) {
     case "New":
@@ -43,6 +41,20 @@ const mapStringToStatus = (statusStr) => {
   }
 };
 
+// Accurately determine the active round stage based strictly on candidate status
+const getApplicantRound = (app) => {
+  const raw = Number(app.rawStatus);
+  const status = app.status || "";
+
+  if (raw === 2 || status === "Round 1 Scheduled") return 1;
+  if (raw === 3 || status === "Round 2 Scheduled") return 2;
+  if (raw === 4 || status === "Round 3 Scheduled") return 3;
+  if (status === "Scheduled") return 1;
+
+  // New (1), Selected (5), and Rejected (6) have no active scheduled round
+  return 0;
+};
+
 export default function ApplicationsManager() {
   const [apps, setApps] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,13 +62,15 @@ export default function ApplicationsManager() {
 
   const [activeModalId, setActiveModalId] = useState(null);
   const [targetRound, setTargetRound] = useState(1);
+  const [isRescheduling, setIsRescheduling] = useState(false);
   const [expandedRowId, setExpandedRowId] = useState(null);
+  const [schedulingLoading, setSchedulingLoading] = useState(false);
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRole, setSelectedRole] = useState("all");
   const [selectedExperience, setSelectedExperience] = useState("all");
-  const [selectedStatus, setSelectedStatus] = useState("all"); // 'all' | 'New' | 'Scheduled' | 'Round 1' | 'Round 2' | 'Round 3' | 'Selected' | 'Rejected'
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [filterDate, setFilterDate] = useState("");
 
   // Form state for scheduling
@@ -66,43 +80,68 @@ export default function ApplicationsManager() {
     locationOrLink: "",
   });
 
-  // --- Fetch Applications from Flask Backend ---
   const fetchApplications = async () => {
     setLoading(true);
     setFetchError("");
     try {
       const response = await fetch(`${API_BASE_URL}/applied_jobs`);
-      
       const isJson = response.headers.get("content-type")?.includes("application/json");
       const result = isJson ? await response.json() : await response.text();
 
       if (!response.ok) {
-        const errorMsg = isJson 
-          ? (result.details ? `${result.error}: ${result.details}` : result.error)
+        const errorMsg = isJson
+          ? result.details
+            ? `${result.error}: ${result.details}`
+            : result.error
           : result;
         throw new Error(errorMsg || `Server returned status ${response.status}`);
       }
 
-      // Format applications from database schema
-      const formatted = (Array.isArray(result) ? result : []).map((item) => ({
-        id: item.user_id,
-        jobId: item.job_id,
-        candidateName: item.user_name || "Unknown",
-        email: item.user_email || "",
-        phone: item.user_mobile || "",
-        qualification: item.user_qualification || "",
-        experience: item.user_experience || "",
-        city: item.user_residential || "",
-        role: item.job_title || "General Application",
-        status: mapStatusToString(item.user_status),
-        rawStatus: item.user_status,
-        appliedDate: item.applied_date || "",
-        linkedinUrl: item.user_linkedin || "",
-        resumeUrl: item.user_resume
-          ? `${API_BASE_URL}/applied_jobs/resume/${item.user_resume}`
-          : null,
-        interview: null,
-      }));
+      const rawApps = Array.isArray(result) ? result : [];
+
+      const formatted = await Promise.all(
+        rawApps.map(async (item) => {
+          let latestInterview = null;
+
+          try {
+            const intRes = await fetch(`${API_BASE_URL}/candidate/${item.user_id}/interviews`);
+            if (intRes.ok) {
+              const intData = await intRes.json();
+              if (intData.interviews && intData.interviews.length > 0) {
+                const last = intData.interviews[intData.interviews.length - 1];
+                latestInterview = {
+                  round: last.round_number,
+                  dateTime: last.scheduled_at,
+                  mode: last.interview_mode === "online" ? "Online" : "Offline",
+                  locationOrLink: last.interview_mode === "online" ? last.meeting_link : last.location,
+                };
+              }
+            }
+          } catch {
+            // Keep latestInterview as null
+          }
+
+          return {
+            id: item.user_id,
+            jobId: item.job_id,
+            candidateName: item.user_name || "Unknown",
+            email: item.user_email || "",
+            phone: item.user_mobile || "",
+            qualification: item.user_qualification || "",
+            experience: item.user_experience || "",
+            city: item.user_residential || "",
+            role: item.job_title || "General Application",
+            status: mapStatusToString(item.user_status),
+            rawStatus: item.user_status,
+            appliedDate: item.applied_date || "",
+            linkedinUrl: item.user_linkedin || "",
+            resumeUrl: item.user_resume
+              ? `${API_BASE_URL}/applied_jobs/resume/${item.user_resume}`
+              : null,
+            interview: latestInterview,
+          };
+        })
+      );
 
       setApps(formatted);
     } catch (err) {
@@ -121,93 +160,125 @@ export default function ApplicationsManager() {
     setExpandedRowId((prev) => (prev === id ? null : id));
   };
 
-  // Persist status change to backend (with optimistic state fallback)
   const handleStatusChange = async (id, newStatus) => {
+    const statusInt = mapStringToStatus(newStatus);
     setApps((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a))
+      prev.map((a) => (a.id === id ? { ...a, status: newStatus, rawStatus: statusInt } : a))
     );
 
     try {
-      const statusInt = mapStringToStatus(newStatus);
-      const res = await fetch(`${API_BASE_URL}/applied_jobs/${id}/status`, {
+      await fetch(`${API_BASE_URL}/applied_jobs/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_status: statusInt }),
       });
-
-      if (!res.ok) {
-        console.warn("Backend status update endpoint unavailable. Kept local change.");
-      }
-    } catch {
-      // Keep optimistic UI update
+    } catch (err) {
+      console.warn("Backend status update error:", err);
     }
   };
 
-  const handleOpenScheduleModal = (app, roundNumber) => {
+  const handleOpenScheduleModal = (app, roundNumber, reschedule = false) => {
     setActiveModalId(app.id);
     setTargetRound(roundNumber);
+    setIsRescheduling(reschedule);
 
-    const isEditingCurrentRound = app.interview?.round === roundNumber;
-
-    setScheduleData(
-      isEditingCurrentRound
-        ? {
-            dateTime: app.interview?.dateTime || "",
-            mode: app.interview?.mode || "Online",
-            locationOrLink: app.interview?.locationOrLink || "",
-          }
-        : {
-            dateTime: "",
-            mode: "Online",
-            locationOrLink: "",
-          }
-    );
+    if (reschedule && app.interview) {
+      setScheduleData({
+        dateTime: app.interview.dateTime ? app.interview.dateTime.slice(0, 16) : "",
+        mode: app.interview.mode || "Online",
+        locationOrLink: app.interview.locationOrLink || "",
+      });
+    } else {
+      setScheduleData({
+        dateTime: "",
+        mode: "Online",
+        locationOrLink: "",
+      });
+    }
   };
 
   const handleScheduleSubmit = async (e, id) => {
     e.preventDefault();
     if (!scheduleData.dateTime) return;
 
+    setSchedulingLoading(true);
+    const targetApp = apps.find((a) => a.id === id);
     const roundStatus = `Round ${targetRound} Scheduled`;
+    const statusInt = mapStringToStatus(roundStatus);
 
-    setApps((prev) =>
-      prev.map((app) =>
-        app.id === id
-          ? {
-              ...app,
-              status: roundStatus,
-              interview: {
-                round: targetRound,
-                dateTime: scheduleData.dateTime,
-                mode: scheduleData.mode,
-                locationOrLink: scheduleData.locationOrLink,
-              },
-            }
-          : app
-      )
-    );
+    const endpoint = isRescheduling
+      ? `${API_BASE_URL}/reschedule-interview`
+      : `${API_BASE_URL}/schedule-interview`;
+
+    const method = isRescheduling ? "PATCH" : "POST";
+
+    const payload = {
+      user_id: id,
+      job_id: targetApp?.jobId || 0,
+      round_number: targetRound,
+      round_name: `Round ${targetRound}`,
+      interview_mode: scheduleData.mode.toLowerCase(),
+      scheduled_at: scheduleData.dateTime,
+      meeting_link: scheduleData.mode === "Online" ? scheduleData.locationOrLink : "",
+      location: scheduleData.mode === "Offline" ? scheduleData.locationOrLink : "",
+      status: roundStatus,
+      user_status: statusInt,
+    };
 
     try {
-      const statusInt = mapStringToStatus(roundStatus);
+      const res = await fetch(endpoint, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        alert(data.message || "Failed to process interview schedule.");
+        setSchedulingLoading(false);
+        return;
+      }
+
+      // Persist status change to applied_jobs table
       await fetch(`${API_BASE_URL}/applied_jobs/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ user_status: statusInt }),
       });
-    } catch {
-      // Local state is already updated
-    }
 
-    setActiveModalId(null);
+      // Update state
+      setApps((prev) =>
+        prev.map((app) =>
+          app.id === id
+            ? {
+                ...app,
+                status: roundStatus,
+                rawStatus: statusInt,
+                interview: {
+                  round: targetRound,
+                  dateTime: scheduleData.dateTime,
+                  mode: scheduleData.mode,
+                  locationOrLink: scheduleData.locationOrLink,
+                },
+              }
+            : app
+        )
+      );
+
+      setActiveModalId(null);
+    } catch (error) {
+      console.error("Error submitting schedule:", error);
+      alert("Unable to connect to the server.");
+    } finally {
+      setSchedulingLoading(false);
+    }
   };
 
-  // Derive unique job roles from live dataset
   const availableRoles = useMemo(() => {
     const roles = apps.map((a) => a.role).filter(Boolean);
     return Array.from(new Set(roles));
   }, [apps]);
 
-  // Filter and search logic with Round 1 to 3 support
   const filteredApps = useMemo(() => {
     return apps.filter((app) => {
       const qualification = app.qualification || "";
@@ -215,20 +286,14 @@ export default function ApplicationsManager() {
         app.city || ""
       } ${qualification}`.toLowerCase();
 
-      // Search bar
-      if (
-        searchQuery.trim() &&
-        !searchTarget.includes(searchQuery.toLowerCase().trim())
-      ) {
+      if (searchQuery.trim() && !searchTarget.includes(searchQuery.toLowerCase().trim())) {
         return false;
       }
 
-      // Role filter
       if (selectedRole !== "all" && app.role !== selectedRole) {
         return false;
       }
 
-      // Status & Round filtering
       if (selectedStatus !== "all") {
         if (selectedStatus === "New") {
           if (app.status !== "New" && app.rawStatus !== 1) return false;
@@ -237,36 +302,22 @@ export default function ApplicationsManager() {
             return false;
           }
         } else if (selectedStatus === "Round 1") {
-          if (app.status !== "Round 1 Scheduled" && Number(app.rawStatus) !== 2) {
-            return false;
-          }
+          if (app.status !== "Round 1 Scheduled" && Number(app.rawStatus) !== 2) return false;
         } else if (selectedStatus === "Round 2") {
-          if (app.status !== "Round 2 Scheduled" && Number(app.rawStatus) !== 3) {
-            return false;
-          }
+          if (app.status !== "Round 2 Scheduled" && Number(app.rawStatus) !== 3) return false;
         } else if (selectedStatus === "Round 3") {
-          if (app.status !== "Round 3 Scheduled" && Number(app.rawStatus) !== 4) {
-            return false;
-          }
+          if (app.status !== "Round 3 Scheduled" && Number(app.rawStatus) !== 4) return false;
         } else if (selectedStatus === "Selected") {
-          if (app.status !== "Selected" && Number(app.rawStatus) !== 5) {
-            return false;
-          }
+          if (app.status !== "Selected" && Number(app.rawStatus) !== 5) return false;
         } else if (selectedStatus === "Rejected") {
-          if (app.status !== "Rejected" && Number(app.rawStatus) !== 6) {
-            return false;
-          }
+          if (app.status !== "Rejected" && Number(app.rawStatus) !== 6) return false;
         }
       }
 
-      // Applied Date filter
       if (filterDate && app.appliedDate) {
-        if (new Date(app.appliedDate) < new Date(filterDate)) {
-          return false;
-        }
+        if (new Date(app.appliedDate) < new Date(filterDate)) return false;
       }
 
-      // Experience filter
       if (selectedExperience !== "all") {
         const expDigits = parseInt(app.experience, 10);
         const expNum = isNaN(expDigits) ? 0 : expDigits;
@@ -279,14 +330,7 @@ export default function ApplicationsManager() {
 
       return true;
     });
-  }, [
-    apps,
-    searchQuery,
-    selectedRole,
-    selectedStatus,
-    filterDate,
-    selectedExperience,
-  ]);
+  }, [apps, searchQuery, selectedRole, selectedStatus, filterDate, selectedExperience]);
 
   const handleResetFilters = () => {
     setSearchQuery("");
@@ -303,19 +347,16 @@ export default function ApplicationsManager() {
     selectedStatus !== "all" ||
     filterDate;
 
-  // Status Filter options configuration
   const statusFilterOptions = [
     { key: "all", label: "All" },
     { key: "New", label: "New" },
     { key: "Scheduled", label: "All Scheduled" },
-    { key: "Round 1", label: "Round 1", badgeColor: "text-blue-600" },
-    { key: "Round 2", label: "Round 2", badgeColor: "text-indigo-600" },
-    { key: "Round 3", label: "Round 3", badgeColor: "text-purple-600" },
+    { key: "Round 1", label: "Round 1" },
+    { key: "Round 2", label: "Round 2" },
+    { key: "Round 3", label: "Round 3" },
     { key: "Selected", label: "Selected" },
     { key: "Rejected", label: "Rejected" },
   ];
-
-  // ---- Subcomponents ----
 
   const StatusBadge = ({ app }) => {
     const isR1 = app.status === "Round 1 Scheduled" || Number(app.rawStatus) === 2;
@@ -366,58 +407,84 @@ export default function ApplicationsManager() {
         {app.interview.locationOrLink && (
           <p className="text-[10px] text-gray-600 truncate">
             {app.interview.mode === "Online" ? "Link: " : "Venue: "}
-            <span className="font-mono">{app.interview.locationOrLink}</span>
+            {app.interview.mode === "Online" ? (
+              <a
+                href={app.interview.locationOrLink}
+                target="_blank"
+                rel="noreferrer"
+                className="text-blue-600 hover:underline font-mono"
+              >
+                {app.interview.locationOrLink}
+              </a>
+            ) : (
+              <span className="font-mono">{app.interview.locationOrLink}</span>
+            )}
           </p>
         )}
       </div>
     );
   };
 
-  const ActionButtons = ({ app, currentRound, wrap }) => (
-    <div className={`inline-flex items-center gap-1.5 ${wrap ? "flex-wrap" : ""}`}>
-      {currentRound > 0 && app.status !== "Selected" && app.status !== "Rejected" && (
-        <button
-          type="button"
-          onClick={() => handleStatusChange(app.id, "Selected")}
-          className="px-2 py-0.5 text-[11px] leading-tight font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded border border-emerald-200 transition-colors shadow-xs"
-        >
-          Select
-        </button>
-      )}
+  const ActionButtons = ({ app, currentRound, wrap }) => {
+    const isSelected = app.status === "Selected" || Number(app.rawStatus) === 5;
+    const isRejected = app.status === "Rejected" || Number(app.rawStatus) === 6;
 
-      {app.status !== "Selected" && app.status !== "Rejected" && (
-        <>
-          {currentRound === 0 && (
-            <button
-              type="button"
-              onClick={() => handleOpenScheduleModal(app, 1)}
-              className="px-2 py-0.5 text-[11px] leading-tight font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors shadow-xs whitespace-nowrap"
-            >
-              Schedule R1
-            </button>
-          )}
-          {currentRound === 1 && (
-            <button
-              type="button"
-              onClick={() => handleOpenScheduleModal(app, 2)}
-              className="px-2 py-0.5 text-[11px] leading-tight font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded border border-indigo-200 transition-colors shadow-xs whitespace-nowrap"
-            >
-              Schedule R2
-            </button>
-          )}
-          {currentRound === 2 && (
-            <button
-              type="button"
-              onClick={() => handleOpenScheduleModal(app, 3)}
-              className="px-2 py-0.5 text-[11px] leading-tight font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded border border-purple-200 transition-colors shadow-xs whitespace-nowrap"
-            >
-              Schedule R3
-            </button>
-          )}
-        </>
-      )}
+    if (isSelected || isRejected) return null;
 
-      {app.status !== "Rejected" && app.status !== "Selected" && (
+    return (
+      <div className={`inline-flex items-center gap-1.5 ${wrap ? "flex-wrap" : ""}`}>
+        {/* Select candidate (available only once at least round 1 is reached) */}
+        {currentRound > 0 && (
+          <button
+            type="button"
+            onClick={() => handleStatusChange(app.id, "Selected")}
+            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded border border-emerald-200 transition-colors shadow-xs"
+          >
+            Select
+          </button>
+        )}
+
+        {/* Dynamic progressive scheduling */}
+        {currentRound === 0 && (
+          <button
+            type="button"
+            onClick={() => handleOpenScheduleModal(app, 1, false)}
+            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors shadow-xs whitespace-nowrap"
+          >
+            Schedule R1
+          </button>
+        )}
+        {currentRound === 1 && (
+          <button
+            type="button"
+            onClick={() => handleOpenScheduleModal(app, 2, false)}
+            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded border border-indigo-200 transition-colors shadow-xs whitespace-nowrap"
+          >
+            Schedule R2
+          </button>
+        )}
+        {currentRound === 2 && (
+          <button
+            type="button"
+            onClick={() => handleOpenScheduleModal(app, 3, false)}
+            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded border border-purple-200 transition-colors shadow-xs whitespace-nowrap"
+          >
+            Schedule R3
+          </button>
+        )}
+
+        {/* Reschedule Button: Only show if an interview has actually been scheduled */}
+        {currentRound > 0 && (
+          <button
+            type="button"
+            onClick={() => handleOpenScheduleModal(app, currentRound, true)}
+            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded border border-amber-200 transition-colors shadow-xs whitespace-nowrap"
+          >
+            Reschedule
+          </button>
+        )}
+
+        {/* Reject Candidate */}
         <button
           type="button"
           onClick={() => handleStatusChange(app.id, "Rejected")}
@@ -425,9 +492,9 @@ export default function ApplicationsManager() {
         >
           Reject
         </button>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
   const DetailsGrid = ({ app, cols = "grid-cols-2 md:grid-cols-5" }) => (
     <div className={`grid ${cols} gap-4 text-xs`}>
@@ -530,7 +597,6 @@ export default function ApplicationsManager() {
       {/* Filter and Search Bar */}
       <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-          {/* Search */}
           <div className="sm:col-span-2 lg:col-span-2 relative">
             <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
               Search Candidate
@@ -559,7 +625,6 @@ export default function ApplicationsManager() {
             </div>
           </div>
 
-          {/* Role */}
           <div>
             <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
               Job Role
@@ -578,7 +643,6 @@ export default function ApplicationsManager() {
             </select>
           </div>
 
-          {/* Experience */}
           <div>
             <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
               Experience
@@ -596,7 +660,6 @@ export default function ApplicationsManager() {
             </select>
           </div>
 
-          {/* Date */}
           <div>
             <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
               Applied From
@@ -610,7 +673,6 @@ export default function ApplicationsManager() {
           </div>
         </div>
 
-        {/* Secondary Filter Row: Status + Round 1-3 Chips */}
         <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-gray-100">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[11px] text-gray-500 font-medium">Stage:</span>
@@ -656,7 +718,7 @@ export default function ApplicationsManager() {
         </div>
       ) : (
         <>
-          {/* Mobile Card View (below md) */}
+          {/* Mobile Card View */}
           <div className="md:hidden space-y-3">
             {filteredApps.length === 0 ? (
               <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
@@ -664,17 +726,7 @@ export default function ApplicationsManager() {
               </div>
             ) : (
               filteredApps.map((app) => {
-                const currentRound =
-                  app.interview?.round ||
-                  (app.status === "Round 1 Scheduled" || Number(app.rawStatus) === 2
-                    ? 1
-                    : app.status === "Round 2 Scheduled" || Number(app.rawStatus) === 3
-                    ? 2
-                    : app.status === "Round 3 Scheduled" || Number(app.rawStatus) === 4
-                    ? 3
-                    : app.status === "Scheduled"
-                    ? 1
-                    : 0);
+                const currentRound = getApplicantRound(app);
                 const isExpanded = expandedRowId === app.id;
 
                 return (
@@ -713,12 +765,7 @@ export default function ApplicationsManager() {
                           viewBox="0 0 24 24"
                           stroke="currentColor"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M19 9l-7 7-7-7"
-                          />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                         </svg>
                       </button>
                     </div>
@@ -757,7 +804,7 @@ export default function ApplicationsManager() {
             )}
           </div>
 
-          {/* Desktop Table View (md and up) */}
+          {/* Desktop Table View */}
           <div className="hidden md:block bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm min-w-[880px]">
@@ -781,17 +828,7 @@ export default function ApplicationsManager() {
                     </tr>
                   ) : (
                     filteredApps.map((app) => {
-                      const currentRound =
-                        app.interview?.round ||
-                        (app.status === "Round 1 Scheduled" || Number(app.rawStatus) === 2
-                          ? 1
-                          : app.status === "Round 2 Scheduled" || Number(app.rawStatus) === 3
-                          ? 2
-                          : app.status === "Round 3 Scheduled" || Number(app.rawStatus) === 4
-                          ? 3
-                          : app.status === "Scheduled"
-                          ? 1
-                          : 0);
+                      const currentRound = getApplicantRound(app);
                       const isExpanded = expandedRowId === app.id;
 
                       return (
@@ -812,12 +849,7 @@ export default function ApplicationsManager() {
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M19 9l-7 7-7-7"
-                                  />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                               </button>
                             </td>
@@ -848,12 +880,7 @@ export default function ApplicationsManager() {
                                   rel="noopener noreferrer"
                                   className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-medium underline"
                                 >
-                                  <svg
-                                    className="w-3.5 h-3.5"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
+                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path
                                       strokeLinecap="round"
                                       strokeLinejoin="round"
@@ -900,15 +927,19 @@ export default function ApplicationsManager() {
         </>
       )}
 
-      {/* Schedule Interview Modal */}
+      {/* Schedule / Reschedule Modal */}
       {activeModalId && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gray-100 max-h-[90vh] overflow-y-auto">
             <h3 className="font-semibold text-gray-900 text-lg mb-1">
-              Schedule Interview — Round {targetRound}
+              {isRescheduling
+                ? `Reschedule Interview — Round ${targetRound}`
+                : `Schedule Interview — Round ${targetRound}`}
             </h3>
             <p className="text-xs text-gray-500 mb-5">
-              Set interview timing and location or video coordinates for this round.
+              {isRescheduling
+                ? "Update interview timing, mode, or coordinates for this round."
+                : "Set interview timing and location or video coordinates for this round."}
             </p>
 
             <form
@@ -987,16 +1018,22 @@ export default function ApplicationsManager() {
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
+                  disabled={schedulingLoading}
                   onClick={() => setActiveModalId(null)}
-                  className="px-3 py-2 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="px-3 py-2 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs bg-black text-white hover:bg-gray-800 rounded-lg font-medium transition-colors"
+                  disabled={schedulingLoading}
+                  className="px-4 py-2 text-xs bg-black text-white hover:bg-gray-800 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
-                  Confirm Round {targetRound}
+                  {schedulingLoading
+                    ? "Saving..."
+                    : isRescheduling
+                    ? `Confirm Reschedule`
+                    : `Confirm Round ${targetRound}`}
                 </button>
               </div>
             </form>

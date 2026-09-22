@@ -5,8 +5,8 @@ import { products, process } from "../data/content";
 
 const metrics = [
   { value: "3", label: "Products in production, each doing one job well" },
-  { value: "24", label: "Engineers, designers and support specialists" },
-  { value: "2021", label: "Founded in Pune, shipping from day one" },
+  { value: "11", label: "Engineers, designers and support specialists" },
+  { value: "2026", label: "Founded in Pune, shipping from day one" },
   { value: "10 yr", label: "The horizon we build every product against" },
 ];
 
@@ -107,24 +107,12 @@ export default function Home() {
                   </p>
                   <span className="mt-auto pt-6 inline-flex items-center gap-1.5 text-[0.85rem] font-semibold text-accent">
                     Product detail
-                    <span aria-hidden="true">â†’</span>
+                    <span aria-hidden="true"></span>
                   </span>
                 </Link>
               </Reveal>
             ))}
           </div>
-
-          <Reveal delay={products.length * 120}>
-            <div className="mt-10">
-              <Link
-                to="/products"
-                className="inline-flex items-center gap-1.5 text-[0.9375rem] font-semibold text-accent hover:text-accent-strong transition-colors"
-              >
-                All eight capabilities in detail
-                <span aria-hidden="true">â†’</span>
-              </Link>
-            </div>
-          </Reveal>
         </div>
       </section>
 
@@ -175,7 +163,7 @@ export default function Home() {
               />
               <div className="relative">
                 <h2 className="text-display-xs !text-ink-inverse">
-                  Have a product that needs building â€” or rebuilding?
+                  Have a product that needs to be built or enhanced?
                 </h2>
                 <p className="mt-3 max-w-[46ch] text-[0.9375rem] leading-relaxed !text-ink-inverse-2">
                   We take on a small number of projects at a time. Tell us where

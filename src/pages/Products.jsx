@@ -27,8 +27,9 @@ export default function Products() {
               <Reveal key={p.name} delay={i * 120} className="h-full">
                 <article className="card card--hover h-full flex flex-col overflow-hidden">
                   <div className={`h-1 w-full ${accents[i]}`} aria-hidden="true" />
-
+                  
                   <div className="flex flex-col flex-1 p-7">
+                    <Link to="/contact">
                     <div className="flex items-center gap-2">
                       <span
                         className={`w-1.5 h-1.5 rounded-full ${accents[i]}`}
@@ -70,20 +71,28 @@ export default function Products() {
                         {p.idealFor}
                       </p>
                     </div>
+                    </Link>
+                    
 
-                    <div className="mt-auto pt-7">
+                  <div className="mt-auto pt-7">
                       <Link
                         to="/contact"
                         className="w-full inline-flex items-center justify-center bg-accent text-white text-[0.9rem] font-semibold px-5 py-3 rounded-full transition-colors hover:bg-accent-strong"
                       >
                         Request a demo
                       </Link>
-                    </div>
+                    </div>  
                   </div>
+                  
                 </article>
+                
+
               </Reveal>
+
             ))}
+            
           </div>
+          
         </div>
       </section>
 

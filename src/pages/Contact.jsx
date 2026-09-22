@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { Turnstile } from "@marsidev/react-turnstile";
 
-import { useParallax } from "../hooks/useParallax";
 import Reveal from "../components/Reveal";
 
 export default function Contact() {
-  const bgRef = useParallax(-0.12);
 
   // -----------------------------------
   // Step
@@ -393,47 +391,36 @@ export default function Contact() {
   if (submitted) {
     return (
       <div>
-        <section className="relative bg-ink grain overflow-hidden pt-40 pb-20">
-          <div
-            ref={bgRef}
-            data-parallax
-            className="absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full opacity-[0.14]"
-            style={{
-              background:
-                "radial-gradient(circle, #3E5FE0, transparent 70%)",
-            }}
-            aria-hidden="true"
-          />
-
-          <div className="relative max-w-4xl mx-auto px-6">
-            <p className="font-mono-label text-[14px] text-signal mb-6">
+        <section className="relative bg-paper ambient-wash overflow-hidden pt-32 pb-20 section-rule">
+          <div className="relative max-w-prose mx-auto px-6">
+            <p className="eyebrow mb-5">
               Contact
             </p>
 
-            <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
+            <h1 className="text-display">
               Thank you.
             </h1>
 
-            <p className="text-mist text-lg mt-6 max-w-2xl leading-relaxed">
+            <p className="mt-6 max-w-[52ch] text-[1.125rem] leading-relaxed text-ink-2">
               Your message has been successfully sent.
             </p>
           </div>
         </section>
 
-        <section className="bg-paper py-20">
-          <div className="max-w-6xl mx-auto px-6">
-            <div className="max-w-3xl mx-auto">
-              <div className="bg-white border border-signal rounded-2xl p-10 text-center">
+        <section className="bg-white py-20 section-rule">
+          <div className="max-w-container mx-auto px-6">
+            <div className="max-w-[620px] mx-auto">
+              <div className="card p-10 text-center">
 
-                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-2xl font-bold">
+                <div className="w-14 h-14 mx-auto mb-5 rounded-full bg-accent-soft text-accent flex items-center justify-center text-2xl font-bold">
                   ✓
                 </div>
 
-                <h2 className="font-display text-2xl font-semibold mb-3">
+                <h2 className="text-display-xs mb-3">
                   Message sent.
                 </h2>
 
-                <p className="text-graphite">
+                <p className="text-ink-2">
                   Thanks for writing in — we'll get back
                   to you within one working day.
                 </p>
@@ -453,30 +440,19 @@ export default function Contact() {
       {/* HERO SECTION */}
       {/* ================================= */}
 
-      <section className="relative bg-ink grain overflow-hidden pt-40 pb-20">
+      <section className="relative bg-paper ambient-wash overflow-hidden pt-32 pb-20 section-rule">
 
-        <div
-          ref={bgRef}
-          data-parallax
-          className="absolute -top-24 -left-24 w-[480px] h-[480px] rounded-full opacity-[0.14]"
-          style={{
-            background:
-              "radial-gradient(circle, #3E5FE0, transparent 70%)",
-          }}
-          aria-hidden="true"
-        />
+        <div className="relative max-w-prose mx-auto px-6">
 
-        <div className="relative max-w-4xl mx-auto px-6">
-
-          <p className="font-mono-label text-[14px] text-signal mb-6">
+          <p className="eyebrow mb-5">
             Contact
           </p>
 
-          <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
+          <h1 className="text-display">
             Tell us what you're building.
           </h1>
 
-          <p className="text-mist text-lg mt-6 max-w-2xl leading-relaxed">
+          <p className="mt-6 max-w-[52ch] text-[1.125rem] leading-relaxed text-ink-2">
             A few lines about the problem is enough to start.
             We reply within one working day.
           </p>
@@ -488,9 +464,9 @@ export default function Contact() {
       {/* CONTACT SECTION */}
       {/* ================================= */}
 
-      <section className="bg-paper py-20">
+      <section className="bg-white py-20 section-rule">
 
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-5 gap-12">
+        <div className="max-w-container mx-auto px-6 grid md:grid-cols-5 gap-12">
 
           {/* ================================= */}
           {/* CONTACT INFORMATION */}
@@ -500,45 +476,56 @@ export default function Contact() {
 
             <Reveal>
 
-              <p className="font-mono-label text-[14px] text-signal-dim mb-4">
+              <p className="eyebrow mb-5">
                 Reach us directly
               </p>
 
               <ul className="space-y-6">
 
                 <li>
-                  <p className="font-mono-label text-[12px] text-graphite mb-1">
+                  <p className="font-mono-label text-[0.68rem] text-ink-3 mb-1.5">
                     Email
                   </p>
 
                   <a
                     href="mailto:info@axonite.net"
-                    className="font-display text-xl font-semibold hover:text-signal-dim"
+                    className="font-serif text-[1.4rem] tracking-[-0.01em] text-ink hover:text-accent transition-colors"
                   >
                     info@axonite.net
                   </a>
                 </li>
 
                 <li>
-                  <p className="font-mono-label text-[12px] text-graphite mb-1">
+                  <p className="font-mono-label text-[0.68rem] text-ink-3 mb-1.5">
                     Phone
                   </p>
 
                   <a
                     href="tel:+919823103626"
-                    className="font-display text-xl font-semibold hover:text-signal-dim"
+                    className="font-serif text-[1.4rem] tracking-[-0.01em] text-ink hover:text-accent transition-colors"
                   >
-                    +91 9823103626
+                    +91 98231 03626
                   </a>
                 </li>
 
                 <li>
-                  <p className="font-mono-label text-[12px] text-graphite mb-1">
+                  <p className="font-mono-label text-[0.68rem] text-ink-3 mb-1.5">
                     Office
                   </p>
 
-                  <p className="font-display text-xl font-semibold">
+                  <p className="font-serif text-[1.4rem] tracking-[-0.01em] text-ink">
                     Pune, Maharashtra, India
+                  </p>
+                </li>
+
+                <li className="pt-5 border-t border-line-soft">
+                  <p className="text-[0.9rem] leading-relaxed text-ink-2">
+                    Mon – Fri, 09:00 – 21:00 IST. For support questions, write
+                    to{" "}
+                    <a href="mailto:support@axonite.net" className="text-accent hover:underline">
+                      support@axonite.net
+                    </a>
+                    .
                   </p>
                 </li>
 
@@ -564,16 +551,16 @@ export default function Contact() {
 
                 <form
                   onSubmit={handleSubmit}
-                  className="bg-white border border-line-soft rounded-2xl p-8 space-y-5"
+                  className="card p-8 space-y-5"
                 >
 
                   <div className="mb-2">
 
-                    <p className="font-mono-label text-[12px] text-signal-dim">
+                    <p className="font-mono-label text-[0.68rem] text-accent">
                       Step 1 of 2
                     </p>
 
-                    <h2 className="font-display text-2xl font-semibold mt-2">
+                    <h2 className="text-display-xs mt-2">
                       Your information
                     </h2>
 
@@ -628,7 +615,7 @@ export default function Contact() {
 
                     <label
                       htmlFor="description"
-                      className="font-mono-label text-[12px] text-graphite block mb-2"
+                      className="font-mono-label text-[0.68rem] text-ink-3 block mb-2"
                     >
                       Project details
                     </label>
@@ -642,24 +629,24 @@ export default function Contact() {
                       rows={5}
                       maxLength={5000}
                       placeholder="What are you looking to build or fix?"
-                      className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors resize-none ${
+                      className={`w-full bg-paper border rounded-md px-4 py-3 text-sm text-ink placeholder:text-ink-3 focus:outline-none focus:border-accent transition-colors resize-none ${
                         errors.description
-                          ? "border-red-500"
-                          : "border-line-soft"
+                          ? "border-coral"
+                          : "border-line"
                       }`}
                     />
 
-                    <div className="flex justify-between items-start mt-1">
+                    <div className="flex justify-between items-start mt-1.5">
 
                       {errors.description ? (
-                        <p className="text-red-500 text-xs">
+                        <p className="text-coral text-xs">
                           {errors.description}
                         </p>
                       ) : (
                         <span />
                       )}
 
-                      <p className="text-xs text-graphite">
+                      <p className="text-xs text-ink-3">
                         Maximum 5000 characters
                       </p>
 
@@ -670,7 +657,7 @@ export default function Contact() {
                   {/* GENERAL ERROR */}
 
                   {errors.general && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-coral text-sm">
                       {errors.general}
                     </p>
                   )}
@@ -679,7 +666,7 @@ export default function Contact() {
 
                   <button
                     type="submit"
-                    className="w-full md:w-auto inline-flex justify-center bg-ink text-paper font-mono-label text-[11px] px-7 py-3.5 rounded-full hover:bg-signal hover:text-white transition-colors"
+                    className="w-full md:w-auto inline-flex justify-center bg-accent text-white font-semibold text-[0.9375rem] px-7 py-3.5 rounded-full transition-colors hover:bg-accent-strong"
                   >
                     Continue
                   </button>
@@ -694,19 +681,19 @@ export default function Contact() {
 
               {step === 2 && (
 
-                <div className="bg-white border border-line-soft rounded-2xl p-8 space-y-5">
+                <div className="card p-8 space-y-5">
 
                   <div>
 
-                    <p className="font-mono-label text-[12px] text-signal-dim">
+                    <p className="font-mono-label text-[0.68rem] text-accent">
                       Step 2 of 2
                     </p>
 
-                    <h2 className="font-display text-2xl font-semibold mt-2">
+                    <h2 className="text-display-xs mt-2">
                       Security verification
                     </h2>
 
-                    <p className="text-graphite mt-3">
+                    <p className="text-ink-2 mt-3">
                       Please complete the Cloudflare verification
                       to send your message.
                     </p>
@@ -750,7 +737,7 @@ export default function Contact() {
 
                   {verificationSuccessful && (
 
-                    <p className="text-green-600 text-sm">
+                    <p className="text-accent text-sm">
                       ✓ Security verification successful.
                     </p>
 
@@ -762,7 +749,7 @@ export default function Contact() {
 
                   {turnstileError && (
 
-                    <p className="text-red-500 text-sm">
+                    <p className="text-coral text-sm">
                       {turnstileError}
                     </p>
 
@@ -774,7 +761,7 @@ export default function Contact() {
 
                   {processing && (
 
-                    <p className="text-sm text-graphite">
+                    <p className="text-sm text-ink-2">
                       {verificationSuccessful
                         ? "Sending your message..."
                         : "Processing verification..."}
@@ -792,7 +779,7 @@ export default function Contact() {
                       type="button"
                       onClick={handleBack}
                       disabled={processing}
-                      className="w-full sm:w-auto inline-flex justify-center border border-line-soft text-ink font-mono-label text-[11px] px-7 py-3.5 rounded-full hover:bg-paper transition-colors disabled:opacity-50"
+                      className="w-full sm:w-auto inline-flex justify-center border border-line text-ink font-semibold text-[0.9375rem] px-7 py-3.5 rounded-full transition-colors hover:border-ink-3 disabled:opacity-50"
                     >
                       ← Back
                     </button>
@@ -835,7 +822,7 @@ function Field({
 
       <label
         htmlFor={id}
-        className="font-mono-label text-[12px] text-graphite block mb-2"
+        className="font-mono-label text-[0.68rem] text-ink-3 block mb-2"
       >
         {label}
       </label>
@@ -848,16 +835,16 @@ function Field({
         onChange={onChange}
         required={required}
         maxLength={maxLength}
-        className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors ${
+        className={`w-full bg-paper border rounded-md px-4 py-3 text-sm text-ink placeholder:text-ink-3 focus:outline-none focus:border-accent transition-colors ${
           error
-            ? "border-red-500"
-            : "border-line-soft"
+            ? "border-coral"
+            : "border-line"
         }`}
       />
 
       {error && (
 
-        <p className="text-red-500 text-xs mt-1">
+        <p className="text-coral text-xs mt-1.5">
           {error}
         </p>
 

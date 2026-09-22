@@ -204,17 +204,17 @@ export default function AdminBlog() {
   
   return (
     <div className="p-4 sm:p-8 max-w-4xl">
-      <p className="font-mono-label text-[11px] text-signal-dim mb-2">Content</p>
-      <h1 className="font-display text-3xl font-semibold mb-8">Blog posts</h1>
+      <p className="font-mono-label text-[0.66rem] text-accent mb-2">Content</p>
+      <h1 className="text-display-xs mb-8">Blog posts</h1>
 
       {apiError && (
-        <div className="mb-6 p-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl">
+        <div className="mb-6 p-3 bg-coral/10 border border-coral/30 text-coral text-sm rounded-sm">
           {apiError}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white border border-line-soft rounded-2xl p-4 sm:p-6 mb-10 space-y-4">
-        <h2 className="font-display text-lg font-semibold">
+      <form onSubmit={handleSubmit} className="bg-white border border-line rounded-md p-4 sm:p-6 mb-10 space-y-4">
+        <h2 className="text-[1.2rem] font-serif text-ink">
           {editingId ? "Edit post" : "New post"}
         </h2>
 
@@ -233,29 +233,29 @@ export default function AdminBlog() {
         {/* Media Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="font-mono-label text-[10px] text-graphite block mb-2">
+            <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">
               Image (PNG or JPG)
             </label>
             <input
               type="file"
               accept=".png,.jpg,.jpeg,image/png,image/jpeg"
               onChange={handleImageChange}
-              className="w-full text-sm border border-line-soft rounded-xl px-4 py-3 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:font-mono-label file:text-[10px] file:bg-line-soft file:cursor-pointer cursor-pointer"
+              className="w-full text-sm border border-line rounded-sm px-4 py-3 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:font-mono-label file:text-[10px] file:bg-line file:cursor-pointer cursor-pointer"
             />
-            {imageError && <p className="text-xs text-red-600 mt-2">{imageError}</p>}
+            {imageError && <p className="text-xs text-coral mt-2">{imageError}</p>}
             {form.image && (
               <div className="mt-3 flex items-center gap-3">
                 <img
                   src={form.image}
                   alt="Preview"
-                  className="w-16 h-16 object-cover rounded-lg border border-line-soft"
+                  className="w-16 h-16 object-cover rounded-sm border border-line"
                 />
                 <div className="min-w-0 flex-1">
                   <p className="text-xs truncate">{form.imageName || "Image ready"}</p>
                   <button
                     type="button"
                     onClick={removeImage}
-                    className="text-[10px] font-mono-label text-red-600 hover:underline"
+                    className="font-mono-label text-[0.62rem] text-coral hover:underline"
                   >
                     Remove
                   </button>
@@ -265,25 +265,25 @@ export default function AdminBlog() {
           </div>
 
           <div>
-            <label className="font-mono-label text-[10px] text-graphite block mb-2">
+            <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">
               Video (max 10MB)
             </label>
             <input
               type="file"
               accept="video/*"
               onChange={handleVideoChange}
-              className="w-full text-sm border border-line-soft rounded-xl px-4 py-3 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:font-mono-label file:text-[10px] file:bg-line-soft file:cursor-pointer cursor-pointer"
+              className="w-full text-sm border border-line rounded-sm px-4 py-3 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:font-mono-label file:text-[10px] file:bg-line file:cursor-pointer cursor-pointer"
             />
-            {videoError && <p className="text-xs text-red-600 mt-2">{videoError}</p>}
+            {videoError && <p className="text-xs text-coral mt-2">{videoError}</p>}
             {form.video && (
               <div className="mt-3">
-                <video src={form.video} controls className="w-full max-h-32 rounded-lg border border-line-soft" />
+                <video src={form.video} controls className="w-full max-h-32 rounded-sm border border-line" />
                 <div className="flex items-center justify-between mt-2">
                   <p className="text-xs truncate">{form.videoName || "Video ready"}</p>
                   <button
                     type="button"
                     onClick={removeVideo}
-                    className="text-[10px] font-mono-label text-red-600 hover:underline shrink-0"
+                    className="font-mono-label text-[0.62rem] text-coral hover:underline shrink-0"
                   >
                     Remove
                   </button>
@@ -296,10 +296,10 @@ export default function AdminBlog() {
         {/* Content */}
         <div>
           <div className="flex items-center justify-between mb-2">
-            <label className="font-mono-label text-[10px] text-graphite">Content</label>
+            <label className="font-mono-label text-[0.62rem] text-ink-3">Content</label>
             <span
-              className={`text-[10px] font-mono-label ${
-                form.excerpt.length >= MAX_CONTENT_CHARS ? "text-red-600" : "text-graphite"
+              className={`font-mono-label text-[0.62rem] ${
+                form.excerpt.length >= MAX_CONTENT_CHARS ? "text-coral" : "text-ink-3"
               }`}
             >
               {form.excerpt.length}/{MAX_CONTENT_CHARS}
@@ -311,7 +311,7 @@ export default function AdminBlog() {
             onChange={handleChange}
             rows={5}
             maxLength={MAX_CONTENT_CHARS}
-            className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors resize-none"
+            className="w-full border border-line rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors resize-none"
           />
         </div>
 
@@ -319,7 +319,7 @@ export default function AdminBlog() {
           <button
             type="submit"
             disabled={submitting}
-            className="text-white font-mono-label text-[11px] px-6 py-3 rounded-full transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="text-white font-mono-label text-[0.66rem] px-6 py-3 rounded-full transition-opacity hover:opacity-90 disabled:opacity-50"
             style={{ background: "linear-gradient(90deg, #9B4FC9, #3E5FE0, #29B6F6)" }}
           >
             {submitting ? "Saving..." : editingId ? "Save changes" : "Publish post"}
@@ -328,7 +328,7 @@ export default function AdminBlog() {
             <button
               type="button"
               onClick={handleCancel}
-              className="font-mono-label text-[11px] px-6 py-3 rounded-full border border-line-soft hover:border-signal transition-colors"
+              className="font-mono-label text-[0.66rem] px-6 py-3 rounded-full border border-line hover:border-accent transition-colors"
             >
               Cancel
             </button>
@@ -337,11 +337,11 @@ export default function AdminBlog() {
       </form>
 
       {/* Posts List */}
-      <div className="bg-white border border-line-soft rounded-2xl divide-y divide-line-soft">
+      <div className="bg-white border border-line rounded-md divide-y divide-line">
         {loading ? (
-          <p className="p-6 text-sm text-graphite">Loading posts...</p>
+          <p className="p-6 text-sm text-ink-3">Loading posts...</p>
         ) : posts.length === 0 ? (
-          <p className="p-6 text-sm text-graphite">No posts yet.</p>
+          <p className="p-6 text-sm text-ink-3">No posts yet.</p>
         ) : (
           posts.map((post) => (
             <div key={post.id} className="flex items-center justify-between gap-4 p-5">
@@ -350,14 +350,14 @@ export default function AdminBlog() {
                   <img
                     src={post.image}
                     alt={post.title}
-                    className="w-10 h-10 object-cover rounded-lg border border-line-soft shrink-0"
+                    className="w-10 h-10 object-cover rounded-sm border border-line shrink-0"
                   />
                 )}
                 <div className="min-w-0">
-                  <p className="font-display font-semibold truncate">{post.title}</p>
-                  <p className="text-xs text-graphite mt-1 flex items-center gap-1.5 flex-wrap">
+                  <p className="font-serif text-ink truncate">{post.title}</p>
+                  <p className="text-xs text-ink-3 mt-1 flex items-center gap-1.5 flex-wrap">
                     {/* Automatically shown formatted system date */}
-                    <span className="inline-flex items-center bg-gray-100 text-gray-700 px-2 py-0.5 rounded text-[11px] font-medium font-mono">
+                    <span className="inline-flex items-center bg-paper-alt text-ink-2 px-2 py-0.5 rounded text-[11px] font-medium font-mono">
                       {post.formatted_date || "Today"}
                     </span>
                     {post.tag && <span>· {post.tag}</span>}
@@ -368,13 +368,13 @@ export default function AdminBlog() {
               <div className="flex gap-2 shrink-0">
                 <button
                   onClick={() => handleEdit(post)}
-                  className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft hover:border-signal transition-colors"
+                  className="text-xs font-mono-label px-3 py-2 rounded-full border border-line hover:border-accent transition-colors"
                 >
                   Edit
                 </button>
                 <button
                   onClick={() => handleDelete(post.id)}
-                  className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft text-red-600 hover:border-red-400 transition-colors"
+                  className="text-xs font-mono-label px-3 py-2 rounded-full border border-line text-coral hover:border-coral transition-colors"
                 >
                   Delete
                 </button>
@@ -390,14 +390,14 @@ export default function AdminBlog() {
 function Field({ label, name, value, onChange, required, placeholder }) {
   return (
     <div>
-      <label className="font-mono-label text-[10px] text-graphite block mb-2">{label}</label>
+      <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">{label}</label>
       <input
         name={name}
         value={value}
         onChange={onChange}
         required={required}
         placeholder={placeholder}
-        className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors"
+        className="w-full border border-line rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
       />
     </div>
   );

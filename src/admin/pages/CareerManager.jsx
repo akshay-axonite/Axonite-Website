@@ -123,17 +123,17 @@ export default function AdminCareers() {
 
   return (
     <div className="p-8 max-w-4xl">
-      <p className="font-mono-label text-[11px] text-signal-dim mb-2">Content</p>
-      <h1 className="font-display text-3xl font-semibold mb-8">Careers</h1>
+      <p className="font-mono-label text-[0.66rem] text-accent mb-2">Content</p>
+      <h1 className="text-display-xs mb-8">Careers</h1>
 
       {errorMessage && (
-        <div className="mb-6 p-4 text-xs text-red-700 bg-red-50 border border-red-200 rounded-xl">
+        <div className="mb-6 p-4 text-xs text-coral bg-coral/10 border border-coral/30 rounded-sm">
           {errorMessage}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="bg-white border border-line-soft rounded-2xl p-6 mb-10 space-y-4">
-        <h2 className="font-display text-lg font-semibold">
+      <form onSubmit={handleSubmit} className="bg-white border border-line rounded-md p-6 mb-10 space-y-4">
+        <h2 className="text-[1.2rem] font-serif text-ink">
           {editingId ? "Edit role" : "New role"}
         </h2>
         <Field label="Job title" name="title" value={form.title} onChange={handleChange} required />
@@ -147,12 +147,12 @@ export default function AdminCareers() {
             required
           />
           <div>
-            <label className="font-mono-label text-[10px] text-graphite block mb-2">Type</label>
+            <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">Type</label>
             <select
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors bg-white"
+              className="w-full border border-line rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors bg-white"
             >
               <option>Full-time</option>
               <option>Part-time</option>
@@ -162,21 +162,21 @@ export default function AdminCareers() {
           </div>
         </div>
         <div>
-          <label className="font-mono-label text-[10px] text-graphite block mb-2">Description</label>
+          <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">Description</label>
           <textarea
             name="desc"
             value={form.desc}
             onChange={handleChange}
             rows={3}
             required
-            className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors resize-none"
+            className="w-full border border-line rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors resize-none"
           />
         </div>
         <div className="flex gap-3">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="text-white font-mono-label text-[11px] px-6 py-3 rounded-full transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer"
+            className="text-white font-mono-label text-[0.66rem] px-6 py-3 rounded-full transition-opacity hover:opacity-90 disabled:opacity-50 cursor-pointer"
             style={{ background: "linear-gradient(90deg, #9B4FC9, #3E5FE0, #29B6F6)" }}
           >
             {isSubmitting
@@ -189,7 +189,7 @@ export default function AdminCareers() {
             <button
               type="button"
               onClick={handleCancel}
-              className="font-mono-label text-[11px] px-6 py-3 rounded-full border border-line-soft hover:border-signal transition-colors"
+              className="font-mono-label text-[0.66rem] px-6 py-3 rounded-full border border-line hover:border-accent transition-colors"
             >
               Cancel
             </button>
@@ -197,26 +197,26 @@ export default function AdminCareers() {
         </div>
       </form>
 
-      <div className="bg-white border border-line-soft rounded-2xl divide-y divide-line-soft">
-        {jobs.length === 0 && <p className="p-6 text-sm text-graphite">No open roles yet.</p>}
+      <div className="bg-white border border-line rounded-md divide-y divide-line">
+        {jobs.length === 0 && <p className="p-6 text-sm text-ink-3">No open roles yet.</p>}
         {jobs.map((job) => (
           <div key={job.job_id} className="flex items-center justify-between gap-4 p-5">
             <div className="min-w-0">
-              <p className="font-display font-semibold truncate">{job.job_title}</p>
-              <p className="text-xs text-graphite mt-1">
+              <p className="font-serif text-ink truncate">{job.job_title}</p>
+              <p className="text-xs text-ink-3 mt-1">
                 {job.job_location} · {job.job_type}
               </p>
             </div>
             <div className="flex gap-2 shrink-0">
               <button
                 onClick={() => handleEdit(job)}
-                className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft hover:border-signal transition-colors"
+                className="text-xs font-mono-label px-3 py-2 rounded-full border border-line hover:border-accent transition-colors"
               >
                 Edit
               </button>
               <button
                 onClick={() => handleDelete(job.job_id)}
-                className="text-xs font-mono-label px-3 py-2 rounded-full border border-line-soft text-red-600 hover:border-red-400 transition-colors"
+                className="text-xs font-mono-label px-3 py-2 rounded-full border border-line text-coral hover:border-coral transition-colors"
               >
                 Delete
               </button>
@@ -231,14 +231,14 @@ export default function AdminCareers() {
 function Field({ label, name, value, onChange, required, placeholder }) {
   return (
     <div>
-      <label className="font-mono-label text-[10px] text-graphite block mb-2">{label}</label>
+      <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">{label}</label>
       <input
         name={name}
         value={value}
         onChange={onChange}
         required={required}
         placeholder={placeholder}
-        className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors"
+        className="w-full border border-line rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors"
       />
     </div>
   );

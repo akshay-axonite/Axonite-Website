@@ -30,9 +30,9 @@ export default function AdminDashboard() {
   }, []);
 
   return (
-    <div className="p-8 max-w-5xl">
-      <p className="font-mono-label text-[11px] text-signal-dim mb-2">Overview</p>
-      <h1 className="font-display text-3xl font-semibold mb-8">Dashboard</h1>
+    <div className="p-6 sm:p-8 max-w-container">
+      <p className="eyebrow mb-3">Overview</p>
+      <h1 className="text-display-sm mb-8">Dashboard</h1>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
         <StatCard label="Visits" value={stats.sessions} />
@@ -40,8 +40,8 @@ export default function AdminDashboard() {
         <StatCard label="Open roles" value={jobCount} />
       </div>
 
-      <div className="bg-signal/5 border border-line-soft rounded-2xl p-6 mt-6">
-        <p className="text-xs text-graphite leading-relaxed max-w-2xl">
+      <div className="bg-accent-soft border border-accent/15 rounded-md p-6 mt-6">
+        <p className="text-xs text-ink-2 leading-relaxed max-w-2xl">
           <strong className="text-ink">Database synced:</strong> Blog post and open role counts are queried directly from MySQL.
         </p>
       </div>
@@ -51,9 +51,9 @@ export default function AdminDashboard() {
 
 function StatCard({ label, value }) {
   return (
-    <div className="bg-white border border-line-soft rounded-2xl p-6">
-      <p className="font-mono-label text-[10px] text-signal-dim mb-2">{label}</p>
-      <p className="font-display text-3xl font-semibold">{value}</p>
+    <div className="card p-6">
+      <p className="font-mono-label text-[0.62rem] text-accent mb-2.5">{label}</p>
+      <p className="font-serif text-[2rem] leading-none text-ink">{value}</p>
     </div>
   );
 }

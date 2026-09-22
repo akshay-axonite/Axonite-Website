@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useParallax } from "../hooks/useParallax";
 import Reveal from "../components/Reveal";
 
 const API_BASE_URL = "http://localhost:5000/api";
@@ -75,8 +74,6 @@ const cityRegex = /^[A-Za-z .-]+$/;
 const MAX_RESUME_SIZE = 3 * 1024 * 1024;
 
 export default function Career() {
-  const bgRef = useParallax(-0.12);
-
   // Live database jobs state
   const [jobs, setJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(true);
@@ -283,32 +280,24 @@ const handleSubmit = async (e) => {
   return (
     <div>
       {/* HERO SECTION */}
-      <section className="relative bg-ink grain overflow-hidden pt-40 pb-24">
-        <div
-          ref={bgRef}
-          data-parallax
-          className="absolute -top-24 left-1/4 w-[480px] h-[480px] rounded-full opacity-[0.14]"
-          style={{ background: "radial-gradient(circle, #9B4FC9, transparent 70%)" }}
-          aria-hidden="true"
-        />
-
-        <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[14px] text-signal mb-6">Career</p>
-          <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
+      <section className="relative bg-paper ambient-wash overflow-hidden pt-32 pb-20 section-rule">
+        <div className="relative max-w-prose mx-auto px-6">
+          <p className="eyebrow mb-5">Career</p>
+          <h1 className="text-display">
             Work on software people actually depend on.
           </h1>
-          <p className="text-mist text-lg mt-6 max-w-2xl leading-relaxed">
+          <p className="mt-6 max-w-[52ch] text-[1.125rem] leading-relaxed text-ink-2">
             We're a small team building products that finance teams, field crews, and shift workers use every day.
           </p>
         </div>
       </section>
 
       {/* OPEN ROLES SECTION */}
-      <section className="bg-paper py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="bg-white py-24 section-rule">
+        <div className="max-w-container mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[14px] text-signal-dim mb-4">Open roles</p>
-            <h2 className="font-display text-3xl md:text-4xl font-semibold max-w-xl">
+            <p className="eyebrow mb-4">Open roles</p>
+            <h2 className="text-display-sm max-w-[24ch]">
               {loadingJobs
                 ? "Loading opportunities..."
                 : jobs.length > 0
@@ -317,9 +306,9 @@ const handleSubmit = async (e) => {
             </h2>
           </Reveal>
 
-          <div className="mt-12 divide-y divide-line-soft border-t border-b border-line-soft">
+          <div className="mt-12 divide-y divide-line border-t border-b border-line">
             {!loadingJobs && jobs.length === 0 && (
-              <p className="py-8 text-sm text-graphite">
+              <p className="py-8 text-sm text-ink-3">
                 Check back soon, or write to us anyway below.
               </p>
             )}
@@ -328,15 +317,15 @@ const handleSubmit = async (e) => {
               <Reveal key={job.job_id} delay={i * 80}>
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-7">
                   <div className="min-w-0">
-                    <h3 className="font-display text-xl font-semibold mb-1.5">
+                    <h3 className="text-[1.3rem] mb-1.5">
                       {job.job_title}
                     </h3>
 
-                    <p className="text-graphite text-sm max-w-md leading-relaxed whitespace-pre-line">
+                    <p className="text-ink-2 text-sm max-w-lg leading-relaxed whitespace-pre-line">
                       {job.job_description}
                     </p>
 
-                    <div className="flex flex-wrap gap-4 mt-3 font-mono-label text-[12px] text-signal-dim">
+                    <div className="flex flex-wrap gap-4 mt-3 font-mono-label text-[0.68rem] text-accent">
                       <span>{job.job_location}</span>
                       <span>•</span>
                       <span>{job.job_type}</span>
@@ -346,7 +335,7 @@ const handleSubmit = async (e) => {
                   <button
                     type="button"
                     onClick={() => handleApply(job)}
-                    className="shrink-0 inline-flex items-center justify-center border border-line-soft rounded-full px-5 py-2.5 font-mono-label text-[14px] hover:border-signal hover:text-signal-dim transition-colors"
+                    className="shrink-0 inline-flex items-center justify-center border border-line rounded-full px-6 py-2.5 text-[0.9375rem] font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
                   >
                     Apply
                   </button>
@@ -358,21 +347,21 @@ const handleSubmit = async (e) => {
       </section>
 
       {/* PERKS SECTION */}
-      <section className="bg-ink py-24">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="section-dark section-rule py-24">
+        <div className="max-w-container mx-auto px-6">
           <Reveal>
-            <p className="font-mono-label text-[14px] text-signal mb-4">Why join</p>
-            <h2 className="font-display text-3xl md:text-4xl font-semibold text-paper max-w-xl">
+            <p className="eyebrow mb-4">Why join</p>
+            <h2 className="text-display-sm text-paper max-w-[22ch]">
               What you get, beyond the paycheck.
             </h2>
           </Reveal>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mt-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10 mt-14">
             {perks.map((p, i) => (
               <Reveal key={p.label} delay={i * 100}>
-                <div className="border-t-2 border-signal pt-5">
-                  <h3 className="font-display text-paper text-lg font-semibold mb-2">{p.label}</h3>
-                  <p className="text-mist text-sm leading-relaxed">{p.desc}</p>
+                <div className="border-t-2 border-accent pt-5">
+                  <h3 className="text-[1.15rem] font-serif text-paper mb-2">{p.label}</h3>
+                  <p className="text-[0.9rem] leading-relaxed">{p.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -381,15 +370,15 @@ const handleSubmit = async (e) => {
       </section>
 
       {/* CONTACT SECTION */}
-      <section className="bg-paper py-20">
-        <div className="max-w-3xl mx-auto px-6 text-center">
+      <section className="bg-paper py-20 section-rule">
+        <div className="max-w-[620px] mx-auto px-6 text-center">
           <Reveal>
-            <h2 className="font-display text-2xl md:text-3xl font-semibold">
+            <h2 className="text-display-xs">
               Don't see the right role listed?
             </h2>
-            <p className="text-graphite mt-3">
+            <p className="text-ink-2 mt-3">
               Write to us anyway at{" "}
-              <a href="mailto:careers@axonite.in" className="text-signal-dim underline">
+              <a href="mailto:careers@axonite.in" className="text-accent hover:underline">
                 careers@axonite.in
               </a>
               . We keep every good resume on file.
@@ -401,19 +390,19 @@ const handleSubmit = async (e) => {
       {/* APPLICATION MODAL */}
       {showApplication && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
-          <div className="relative bg-paper w-full max-w-xl max-h-[92vh] rounded-2xl sm:rounded-3xl shadow-2xl border border-line-soft overflow-hidden flex flex-col">
+          <div className="relative bg-paper w-full max-w-xl max-h-[92vh] rounded-lg sm:rounded-md shadow-lg border border-line overflow-hidden flex flex-col">
             {/* Modal Header */}
-            <div className="relative px-5 sm:px-7 py-5 sm:py-6 border-b border-line-soft bg-paper shrink-0">
-              <p className="font-mono-label text-[10px] sm:text-[11px] text-signal-dim uppercase tracking-wider">
+            <div className="relative px-5 sm:px-7 py-5 sm:py-6 border-b border-line bg-paper shrink-0">
+              <p className="font-mono-label text-[0.68rem] text-accent">
                 Job Application
               </p>
-              <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-semibold mt-1 pr-12 break-words">
+              <h2 className="text-[1.5rem] mt-1 pr-12 break-words">
                 {selectedJob?.job_title}
               </h2>
               <button
                 type="button"
                 onClick={closeApplication}
-                className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border border-line-soft text-graphite text-xl hover:bg-ink hover:text-paper transition-all"
+                className="absolute top-4 right-4 sm:top-5 sm:right-5 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border border-line text-ink-3 text-xl hover:bg-dark hover:text-paper transition-all"
                 title="Close"
               >
                 ×
@@ -428,14 +417,14 @@ const handleSubmit = async (e) => {
                     <div
                       key={num}
                       className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                        step >= num ? "bg-signal" : "bg-line-soft"
+                        step >= num ? "bg-accent" : "bg-line"
                       }`}
                     />
                   ))}
                 </div>
-                <div className="flex justify-between items-center gap-3 mt-2">
-                  <p className="text-[10px] sm:text-[11px] text-graphite">Step {step} of 3</p>
-                  <p className="text-[10px] sm:text-[11px] text-signal-dim text-right">
+                <div className="flex justify-between items-center gap-3 mt-2.5">
+                  <p className="font-mono-label text-[0.62rem] text-ink-3">Step {step} of 3</p>
+                  <p className="font-mono-label text-[0.62rem] text-accent text-right">
                     {step === 1 && "Personal Information"}
                     {step === 2 && "Professional Information"}
                     {step === 3 && "Confirmation"}
@@ -451,17 +440,17 @@ const handleSubmit = async (e) => {
             >
               {step === 1 && !submitted && (
                 <form onSubmit={handleStep1Continue} noValidate>
-                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-1">
+                  <h3 className="text-[1.25rem] font-serif text-ink mb-1">
                     Tell us about yourself
                   </h3>
-                  <p className="text-xs sm:text-sm text-graphite mb-5">
+                  <p className="text-xs sm:text-sm text-ink-3 mb-5">
                     Please provide your basic contact information.
                   </p>
 
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="name" className="block text-xs sm:text-sm font-medium mb-1.5">
-                        Full Name <span className="text-signal">*</span>
+                      <label htmlFor="name" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
+                        Full Name <span className="text-accent">*</span>
                       </label>
                       <input
                         id="name"
@@ -471,17 +460,17 @@ const handleSubmit = async (e) => {
                         onChange={handleChange}
                         maxLength={100}
                         placeholder="Enter your full name"
-                        className={`w-full border rounded-xl px-4 py-3 bg-white text-sm outline-none transition-all ${
+                        className={`w-full border rounded-md px-4 py-3 bg-paper text-sm outline-none transition-all ${
                           errors.name
-                            ? "border-red-500"
-                            : "border-line-soft focus:border-signal focus:ring-2 focus:ring-signal/10"
+                            ? "border-coral"
+                            : "border-line focus:border-accent focus:ring-2 focus:ring-accent/10"
                         }`}
                       />
                       <FieldError message={errors.name} />
                     </div>
 
                     <div>
-                      <label htmlFor="phone" className="block text-xs sm:text-sm font-medium mb-1.5">
+                      <label htmlFor="phone" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
                         Phone Number
                       </label>
                       <input
@@ -498,13 +487,13 @@ const handleSubmit = async (e) => {
                         inputMode="numeric"
                         maxLength={10}
                         placeholder="10 digit mobile number"
-                        className="w-full border border-line-soft rounded-xl px-4 py-3 bg-white text-sm outline-none focus:border-signal focus:ring-2 focus:ring-signal/10 transition-all"
+                        className="w-full border border-line rounded-md px-4 py-3 bg-paper text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-xs sm:text-sm font-medium mb-1.5">
-                        Gmail Address <span className="text-signal">*</span>
+                      <label htmlFor="email" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
+                        Gmail Address <span className="text-accent">*</span>
                       </label>
                       <input
                         id="email"
@@ -513,18 +502,18 @@ const handleSubmit = async (e) => {
                         value={formData.email}
                         onChange={handleChange}
                         placeholder="example@gmail.com"
-                        className={`w-full border rounded-xl px-4 py-3 bg-white text-sm outline-none transition-all ${
+                        className={`w-full border rounded-md px-4 py-3 bg-paper text-sm outline-none transition-all ${
                           errors.email
-                            ? "border-red-500"
-                            : "border-line-soft focus:border-signal focus:ring-2 focus:ring-signal/10"
+                            ? "border-coral"
+                            : "border-line focus:border-accent focus:ring-2 focus:ring-accent/10"
                         }`}
                       />
                       <FieldError message={errors.email} />
                     </div>
 
                     <div>
-                      <label htmlFor="linkedin" className="block text-xs sm:text-sm font-medium mb-1.5">
-                        LinkedIn URL <span className="text-graphite">(Optional)</span>
+                      <label htmlFor="linkedin" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
+                        LinkedIn URL <span className="text-ink-3">(Optional)</span>
                       </label>
                       <input
                         id="linkedin"
@@ -533,7 +522,7 @@ const handleSubmit = async (e) => {
                         value={formData.linkedin}
                         onChange={handleChange}
                         placeholder="https://www.linkedin.com/in/your-profile"
-                        className="w-full border border-line-soft rounded-xl px-4 py-3 bg-white text-sm outline-none focus:border-signal focus:ring-2 focus:ring-signal/10 transition-all"
+                        className="w-full border border-line rounded-md px-4 py-3 bg-paper text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                       />
                     </div>
                   </div>
@@ -541,7 +530,7 @@ const handleSubmit = async (e) => {
                   <div className="flex justify-end mt-6">
                     <button
                       type="submit"
-                      className="w-full sm:w-auto bg-ink text-paper rounded-full px-8 py-3 font-mono-label text-sm hover:bg-signal transition-all"
+                      className="w-full sm:w-auto bg-accent text-white rounded-full px-8 py-3 font-mono-label text-[0.68rem] hover:bg-accent-strong transition-all"
                     >
                       Continue →
                     </button>
@@ -551,16 +540,16 @@ const handleSubmit = async (e) => {
 
               {step === 2 && !submitted && (
                 <form onSubmit={handleStep2Continue} noValidate>
-                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-1">
+                  <h3 className="text-[1.25rem] font-serif text-ink mb-1">
                     Professional information
                   </h3>
-                  <p className="text-xs sm:text-sm text-graphite mb-5">
+                  <p className="text-xs sm:text-sm text-ink-3 mb-5">
                     Tell us about your education and experience.
                   </p>
 
                   <div className="space-y-4">
                     <div>
-                      <label htmlFor="qualification" className="block text-xs sm:text-sm font-medium mb-1.5">
+                      <label htmlFor="qualification" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
                         Qualification
                       </label>
                       <input
@@ -571,23 +560,23 @@ const handleSubmit = async (e) => {
                         onChange={handleChange}
                         maxLength={100}
                         placeholder="e.g. B.E. Computer Engineering"
-                        className="w-full border border-line-soft rounded-xl px-4 py-3 bg-white text-sm outline-none focus:border-signal focus:ring-2 focus:ring-signal/10 transition-all"
+                        className="w-full border border-line rounded-md px-4 py-3 bg-paper text-sm outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="experience" className="block text-xs sm:text-sm font-medium mb-1.5">
-                        Experience <span className="text-signal">*</span>
+                      <label htmlFor="experience" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
+                        Experience <span className="text-accent">*</span>
                       </label>
                       <select
                         id="experience"
                         name="experience"
                         value={formData.experience}
                         onChange={handleChange}
-                        className={`w-full border rounded-xl px-4 py-3 bg-white text-sm outline-none transition-all ${
+                        className={`w-full border rounded-md px-4 py-3 bg-paper text-sm outline-none transition-all ${
                           errors.experience
-                            ? "border-red-500"
-                            : "border-line-soft focus:border-signal focus:ring-2 focus:ring-signal/10"
+                            ? "border-coral"
+                            : "border-line focus:border-accent focus:ring-2 focus:ring-accent/10"
                         }`}
                       >
                         <option value="">Select experience</option>
@@ -606,8 +595,8 @@ const handleSubmit = async (e) => {
                     </div>
 
                     <div>
-                      <label htmlFor="city" className="block text-xs sm:text-sm font-medium mb-1.5">
-                        Residential City <span className="text-signal">*</span>
+                      <label htmlFor="city" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
+                        Residential City <span className="text-accent">*</span>
                       </label>
                       <input
                         id="city"
@@ -622,19 +611,19 @@ const handleSubmit = async (e) => {
                         }
                         maxLength={20}
                         placeholder="Enter your city"
-                        className={`w-full border rounded-xl px-4 py-3 bg-white text-sm outline-none transition-all ${
+                        className={`w-full border rounded-md px-4 py-3 bg-paper text-sm outline-none transition-all ${
                           errors.city
-                            ? "border-red-500"
-                            : "border-line-soft focus:border-signal focus:ring-2 focus:ring-signal/10"
+                            ? "border-coral"
+                            : "border-line focus:border-accent focus:ring-2 focus:ring-accent/10"
                         }`}
                       />
                       <FieldError message={errors.city} />
                     </div>
 
                     <div>
-                      <label htmlFor="resume" className="block text-xs sm:text-sm font-medium mb-1.5">
-                        Resume <span className="text-signal">*</span>{" "}
-                        <span className="text-graphite">(PDF, Max 3 MB)</span>
+                      <label htmlFor="resume" className="block font-mono-label text-[0.68rem] text-ink-3 block mb-2">
+                        Resume <span className="text-accent">*</span>{" "}
+                        <span className="text-ink-3">(PDF, Max 3 MB)</span>
                       </label>
                       <input
                         id="resume"
@@ -658,11 +647,11 @@ const handleSubmit = async (e) => {
                           setErrors((prev) => ({ ...prev, resume: "" }));
                           setFormData((prev) => ({ ...prev, resume: file }));
                         }}
-                        className="w-full border border-line-soft rounded-xl px-3 py-2.5 bg-white text-xs sm:text-sm file:mr-4 file:rounded-full file:border-0 file:bg-ink file:px-4 file:py-2 file:text-xs file:text-paper hover:file:bg-signal transition-all"
+                        className="w-full border border-line rounded-md px-3 py-2.5 bg-white text-xs sm:text-sm file:mr-4 file:rounded-full file:border-0 file:bg-paper file:px-4 file:py-2 file:text-xs file:text-ink hover:file:bg-accent transition-all"
                       />
                       <FieldError message={errors.resume} />
                       {formData.resume && !errors.resume && (
-                        <p className="text-xs text-signal-dim mt-2 truncate">
+                        <p className="text-xs text-accent mt-2 truncate">
                           ✓ {formData.resume.name}
                         </p>
                       )}
@@ -673,13 +662,13 @@ const handleSubmit = async (e) => {
                     <button
                       type="button"
                       onClick={() => setStep(1)}
-                      className="border border-line-soft rounded-full px-7 py-3 font-mono-label text-sm hover:border-signal transition-all"
+                      className="border border-line rounded-full px-7 py-3 font-mono-label text-[0.68rem] hover:border-accent transition-all"
                     >
                       ← Back
                     </button>
                     <button
                       type="submit"
-                      className="bg-ink text-paper rounded-full px-8 py-3 font-mono-label text-sm hover:bg-signal transition-all"
+                      className="bg-accent text-white rounded-full px-8 py-3 font-mono-label text-[0.68rem] hover:bg-accent-strong transition-all"
                     >
                       Continue →
                     </button>
@@ -689,21 +678,21 @@ const handleSubmit = async (e) => {
 
               {step === 3 && !submitted && (
                 <form onSubmit={handleSubmit}>
-                  <h3 className="font-display text-lg sm:text-xl font-semibold mb-1">
+                  <h3 className="text-[1.25rem] font-serif text-ink mb-1">
                     Review your application
                   </h3>
-                  <p className="text-xs sm:text-sm text-graphite mb-5">
+                  <p className="text-xs sm:text-sm text-ink-3 mb-5">
                     Please check your information before submitting.
                   </p>
 
-                  <div className="bg-ink text-paper rounded-xl p-4 mb-4">
-                    <p className="font-mono-label text-[10px] text-mist uppercase">Applying for</p>
-                    <p className="font-display text-base sm:text-lg font-semibold mt-1 break-words">
+                  <div className="bg-accent-soft border border-accent/15 rounded-md p-4 mb-4">
+                    <p className="font-mono-label text-[0.62rem] text-accent uppercase">Applying for</p>
+                    <p className="text-base sm:text-lg font-serif text-ink mt-1 break-words">
                       {selectedJob?.job_title}
                     </p>
                   </div>
 
-                  <div className="border border-line-soft rounded-xl overflow-hidden">
+                  <div className="border border-line rounded-md overflow-hidden">
                     <div className="grid grid-cols-1 sm:grid-cols-2">
                       <ConfirmationItem label="Name" value={formData.name} />
                       <ConfirmationItem label="Phone" value={formData.phone || "Not provided"} />
@@ -720,7 +709,7 @@ const handleSubmit = async (e) => {
                   </div>
 
                   {submitError && (
-  <p className="text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg p-2.5 mt-4">
+  <p className="text-xs text-coral bg-coral/10 border border-coral/40 rounded-md p-2.5 mt-4">
     {submitError}
   </p>
 )}
@@ -730,14 +719,14 @@ const handleSubmit = async (e) => {
     type="button"
     disabled={submitting}
     onClick={() => setStep(2)}
-    className="border border-line-soft rounded-full px-7 py-3 font-mono-label text-sm hover:border-signal transition-all disabled:opacity-50"
+    className="border border-line rounded-full px-7 py-3 font-mono-label text-[0.68rem] hover:border-accent transition-all disabled:opacity-50"
   >
     ← Back
   </button>
   <button
     type="submit"
     disabled={submitting}
-    className="bg-signal text-white rounded-full px-8 py-3 font-mono-label text-sm hover:opacity-90 transition-all disabled:opacity-50"
+    className="bg-accent text-white rounded-full px-8 py-3 font-mono-label text-[0.68rem] hover:bg-accent-strong transition-all disabled:opacity-50"
   >
     {submitting ? "Submitting..." : "Submit Application"}
   </button>
@@ -747,17 +736,17 @@ const handleSubmit = async (e) => {
 
               {submitted && (
                 <div className="text-center py-8">
-                  <div className="w-16 h-16 rounded-full bg-signal mx-auto flex items-center justify-center text-white text-3xl shadow-lg">
+                  <div className="w-16 h-16 rounded-full bg-accent-soft text-accent mx-auto flex items-center justify-center text-3xl">
                     ✓
                   </div>
-                  <h3 className="font-display text-3xl font-semibold mt-6">Applied</h3>
-                  <p className="text-sm text-graphite mt-3 max-w-md mx-auto">
-                    Your application for <strong>{selectedJob?.job_title}</strong> has been submitted successfully.
+                  <h3 className="text-display-xs mt-6">Applied</h3>
+                  <p className="text-sm text-ink-2 mt-3 max-w-md mx-auto">
+                    Your application for <strong className="text-ink font-semibold">{selectedJob?.job_title}</strong> has been submitted successfully.
                   </p>
                   <button
                     type="button"
                     onClick={closeApplication}
-                    className="mt-7 bg-ink text-paper rounded-full px-8 py-3 font-mono-label text-sm hover:bg-signal transition-all"
+                    className="mt-7 bg-accent text-white rounded-full px-8 py-3 font-mono-label text-[0.68rem] hover:bg-accent-strong transition-all"
                   >
                     Close
                   </button>
@@ -773,12 +762,12 @@ const handleSubmit = async (e) => {
 
 const FieldError = ({ message }) => {
   if (!message) return null;
-  return <p className="text-red-500 text-xs mt-1.5 leading-relaxed">{message}</p>;
+  return <p className="text-coral text-xs mt-1.5 leading-relaxed">{message}</p>;
 };
 
 const ConfirmationItem = ({ label, value }) => (
-  <div className="p-3.5 sm:p-4 border-b border-r border-line-soft min-w-0">
-    <p className="text-[10px] md:text-xs text-graphite mb-1">{label}</p>
+  <div className="p-3.5 sm:p-4 border-b border-r border-line min-w-0">
+    <p className="text-[10px] md:text-xs text-ink-3 mb-1">{label}</p>
     <p className="text-xs md:text-sm font-medium break-words">{value}</p>
   </div>
 );

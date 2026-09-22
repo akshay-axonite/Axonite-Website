@@ -368,18 +368,18 @@ export default function ApplicationsManager() {
       <span
         className={`inline-block px-2 py-0.5 text-[10px] leading-tight rounded-full font-medium ${
           isR1
-            ? "bg-blue-50 text-blue-700 border border-blue-200"
+            ? "bg-accent-soft text-accent-strong border border-accent/30"
             : isR2
-            ? "bg-indigo-50 text-indigo-700 border border-indigo-200"
+            ? "bg-accent-soft text-accent border border-accent/30"
             : isR3
-            ? "bg-purple-50 text-purple-700 border border-purple-200"
+            ? "bg-accent-soft text-gold border border-gold/30"
             : isScheduled
-            ? "bg-blue-50 text-blue-700 border border-blue-200"
+            ? "bg-accent-soft text-accent-strong border border-accent/30"
             : app.status === "Selected"
-            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+            ? "bg-accent-soft text-accent border border-accent/25"
             : app.status === "Rejected"
-            ? "bg-rose-50 text-rose-700 border border-rose-200"
-            : "bg-amber-50 text-amber-700 border border-amber-200"
+            ? "bg-coral/10 text-coral border border-coral/30"
+            : "bg-gold-soft text-gold border border-gold/30"
         }`}
       >
         {app.status || "New"}
@@ -391,28 +391,28 @@ export default function ApplicationsManager() {
     const isScheduled = app.status?.includes("Scheduled");
     if (!isScheduled || !app.interview) return null;
     return (
-      <div className="mt-1.5 space-y-0.5 text-[11px] leading-tight text-gray-600 bg-gray-50 p-2 rounded-md border border-gray-100 max-w-xs">
-        <div className="flex items-center gap-1.5 font-medium text-gray-800">
-          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+      <div className="mt-1.5 space-y-0.5 text-[11px] leading-tight text-ink-2 bg-paper-alt p-2 rounded-md border border-line max-w-xs">
+        <div className="flex items-center gap-1.5 font-medium text-ink">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
           <span>
             Round {app.interview.round || 1} ({app.interview.mode})
           </span>
         </div>
-        <p className="text-[10px] text-gray-500 font-mono">
+        <p className="text-[10px] text-ink-3 font-mono">
           {new Date(app.interview.dateTime).toLocaleString([], {
             dateStyle: "medium",
             timeStyle: "short",
           })}
         </p>
         {app.interview.locationOrLink && (
-          <p className="text-[10px] text-gray-600 truncate">
+          <p className="text-[10px] text-ink-2 truncate">
             {app.interview.mode === "Online" ? "Link: " : "Venue: "}
             {app.interview.mode === "Online" ? (
               <a
                 href={app.interview.locationOrLink}
                 target="_blank"
                 rel="noreferrer"
-                className="text-blue-600 hover:underline font-mono"
+                className="text-accent hover:underline font-mono"
               >
                 {app.interview.locationOrLink}
               </a>
@@ -438,7 +438,7 @@ export default function ApplicationsManager() {
           <button
             type="button"
             onClick={() => handleStatusChange(app.id, "Selected")}
-            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded border border-emerald-200 transition-colors shadow-xs"
+            className="px-2 py-0.5 font-mono-label text-[0.62rem] leading-tight text-accent bg-accent-soft hover:bg-accent/10 rounded border border-accent/25 transition-colors "
           >
             Select
           </button>
@@ -449,7 +449,7 @@ export default function ApplicationsManager() {
           <button
             type="button"
             onClick={() => handleOpenScheduleModal(app, 1, false)}
-            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded border border-blue-200 transition-colors shadow-xs whitespace-nowrap"
+            className="px-2 py-0.5 font-mono-label text-[0.62rem] leading-tight text-accent-strong bg-accent-soft hover:bg-accent/20 rounded border border-accent/30 transition-colors  whitespace-nowrap"
           >
             Schedule R1
           </button>
@@ -458,7 +458,7 @@ export default function ApplicationsManager() {
           <button
             type="button"
             onClick={() => handleOpenScheduleModal(app, 2, false)}
-            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded border border-indigo-200 transition-colors shadow-xs whitespace-nowrap"
+            className="px-2 py-0.5 font-mono-label text-[0.62rem] leading-tight text-accent bg-accent-soft hover:bg-accent/10 rounded border border-accent/30 transition-colors  whitespace-nowrap"
           >
             Schedule R2
           </button>
@@ -467,7 +467,7 @@ export default function ApplicationsManager() {
           <button
             type="button"
             onClick={() => handleOpenScheduleModal(app, 3, false)}
-            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded border border-purple-200 transition-colors shadow-xs whitespace-nowrap"
+            className="px-2 py-0.5 font-mono-label text-[0.62rem] leading-tight text-gold bg-accent-soft hover:bg-accent/10 rounded border border-gold/30 transition-colors  whitespace-nowrap"
           >
             Schedule R3
           </button>
@@ -478,7 +478,7 @@ export default function ApplicationsManager() {
           <button
             type="button"
             onClick={() => handleOpenScheduleModal(app, currentRound, true)}
-            className="px-2 py-0.5 text-[11px] leading-tight font-medium text-amber-700 bg-amber-50 hover:bg-amber-100 rounded border border-amber-200 transition-colors shadow-xs whitespace-nowrap"
+            className="px-2 py-0.5 font-mono-label text-[0.62rem] leading-tight text-gold bg-gold-soft hover:bg-gold-soft rounded border border-gold/30 transition-colors  whitespace-nowrap"
           >
             Reschedule
           </button>
@@ -488,7 +488,7 @@ export default function ApplicationsManager() {
         <button
           type="button"
           onClick={() => handleStatusChange(app.id, "Rejected")}
-          className="px-2 py-0.5 text-[11px] leading-tight font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 rounded border border-rose-200 transition-colors shadow-xs"
+          className="px-2 py-0.5 font-mono-label text-[0.62rem] leading-tight text-coral bg-coral/10 hover:bg-coral/15 rounded border border-coral/30 transition-colors "
         >
           Reject
         </button>
@@ -499,42 +499,42 @@ export default function ApplicationsManager() {
   const DetailsGrid = ({ app, cols = "grid-cols-2 md:grid-cols-5" }) => (
     <div className={`grid ${cols} gap-4 text-xs`}>
       <div>
-        <span className="text-gray-400 font-medium block">Qualification</span>
-        <span className="text-gray-800 font-medium">{app.qualification || "Not provided"}</span>
+        <span className="text-ink-3 font-medium block">Qualification</span>
+        <span className="text-ink font-medium">{app.qualification || "Not provided"}</span>
       </div>
       <div>
-        <span className="text-gray-400 font-medium block">Phone Number</span>
-        <span className="text-gray-800 font-mono">{app.phone || "Not provided"}</span>
+        <span className="text-ink-3 font-medium block">Phone Number</span>
+        <span className="text-ink font-mono">{app.phone || "Not provided"}</span>
       </div>
       <div>
-        <span className="text-gray-400 font-medium block">Experience</span>
-        <span className="text-gray-800">{app.experience || "Not provided"}</span>
+        <span className="text-ink-3 font-medium block">Experience</span>
+        <span className="text-ink">{app.experience || "Not provided"}</span>
       </div>
       <div>
-        <span className="text-gray-400 font-medium block">City</span>
-        <span className="text-gray-800">{app.city || "Not provided"}</span>
+        <span className="text-ink-3 font-medium block">City</span>
+        <span className="text-ink">{app.city || "Not provided"}</span>
       </div>
       <div>
-        <span className="text-gray-400 font-medium block">LinkedIn</span>
+        <span className="text-ink-3 font-medium block">LinkedIn</span>
         {app.linkedinUrl ? (
           <a
             href={app.linkedinUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:underline truncate block"
+            className="text-accent hover:underline truncate block"
           >
             {app.linkedinUrl.replace(/^https?:\/\/(www\.)?/, "")}
           </a>
         ) : (
-          <span className="text-gray-400">Not provided</span>
+          <span className="text-ink-3">Not provided</span>
         )}
       </div>
     </div>
   );
 
   const EmptyState = () => (
-    <div className="flex flex-col items-center justify-center gap-2 py-12 px-6 text-center text-gray-400">
-      <svg className="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <div className="flex flex-col items-center justify-center gap-2 py-12 px-6 text-center text-ink-3">
+      <svg className="w-8 h-8 text-line" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -542,17 +542,17 @@ export default function ApplicationsManager() {
           d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
       </svg>
-      <p className="text-sm font-medium text-gray-500">
+      <p className="text-sm font-medium text-ink-3">
         {fetchError ? "Failed to load applications" : "No matching applications found"}
       </p>
       {fetchError && (
-        <p className="text-xs text-rose-500 max-w-md mx-auto">{fetchError}</p>
+        <p className="text-xs text-coral/100 max-w-md mx-auto">{fetchError}</p>
       )}
       {fetchError ? (
         <button
           type="button"
           onClick={fetchApplications}
-          className="text-xs text-blue-600 underline hover:text-blue-800 mt-1"
+          className="text-xs text-accent underline hover:text-accent-strong mt-1"
         >
           Try again
         </button>
@@ -560,7 +560,7 @@ export default function ApplicationsManager() {
         <button
           type="button"
           onClick={handleResetFilters}
-          className="text-xs text-blue-600 underline hover:text-blue-800"
+          className="text-xs text-accent underline hover:text-accent-strong"
         >
           Clear search & filters
         </button>
@@ -573,8 +573,8 @@ export default function ApplicationsManager() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Career Applications</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-ink">Career Applications</h1>
+          <p className="text-sm text-ink-3 mt-1">
             Review candidates, schedule multi-round interviews, and filter candidate data.
           </p>
         </div>
@@ -583,22 +583,22 @@ export default function ApplicationsManager() {
             type="button"
             onClick={fetchApplications}
             disabled={loading}
-            className="p-1.5 text-gray-500 hover:text-gray-800 rounded-md hover:bg-gray-100 transition-all text-xs flex items-center gap-1 border border-gray-200 disabled:opacity-50"
+            className="p-1.5 text-ink-3 hover:text-ink rounded-md hover:bg-line-soft transition-all text-xs flex items-center gap-1 border border-line disabled:opacity-50"
             title="Refresh list"
           >
             ↻ Refresh
           </button>
-          <span className="text-xs font-mono bg-gray-100 px-3 py-1.5 rounded-full text-gray-600">
+          <span className="text-xs font-mono bg-line-soft px-3 py-1.5 rounded-full text-ink-2">
             Showing: {filteredApps.length} / {apps.length}
           </span>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm space-y-3">
+      <div className="card p-4 mb-6 shadow-sm space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           <div className="sm:col-span-2 lg:col-span-2 relative">
-            <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-ink-3 uppercase tracking-wider mb-1">
               Search Candidate
             </label>
             <div className="relative">
@@ -607,10 +607,10 @@ export default function ApplicationsManager() {
                 placeholder="Search by name, email, qualification, city..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-3 py-2 text-xs border border-line rounded-sm focus:outline-none focus:border-accent"
               />
               <svg
-                className="w-4 h-4 text-gray-400 absolute left-2.5 top-2.5"
+                className="w-4 h-4 text-ink-3 absolute left-2.5 top-2.5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -626,13 +626,13 @@ export default function ApplicationsManager() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-ink-3 uppercase tracking-wider mb-1">
               Job Role
             </label>
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-2.5 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full px-2.5 py-2 text-xs border border-line rounded-sm focus:outline-none focus:border-accent bg-white"
             >
               <option value="all">All Roles</option>
               {availableRoles.map((role) => (
@@ -644,13 +644,13 @@ export default function ApplicationsManager() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-ink-3 uppercase tracking-wider mb-1">
               Experience
             </label>
             <select
               value={selectedExperience}
               onChange={(e) => setSelectedExperience(e.target.value)}
-              className="w-full px-2.5 py-2 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full px-2.5 py-2 text-xs border border-line rounded-sm focus:outline-none focus:border-accent bg-white"
             >
               <option value="all">All Experience</option>
               <option value="fresher">Fresher (0 Years)</option>
@@ -661,21 +661,21 @@ export default function ApplicationsManager() {
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-ink-3 uppercase tracking-wider mb-1">
               Applied From
             </label>
             <input
               type="date"
               value={filterDate}
               onChange={(e) => setFilterDate(e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-2.5 py-1.5 text-xs border border-line rounded-sm focus:outline-none focus:border-accent"
             />
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-gray-100">
+        <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-line-soft">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[11px] text-gray-500 font-medium">Stage:</span>
+            <span className="text-[11px] text-ink-3 font-medium">Stage:</span>
             {statusFilterOptions.map(({ key, label }) => {
               const isSelected = selectedStatus === key;
               return (
@@ -685,8 +685,8 @@ export default function ApplicationsManager() {
                   onClick={() => setSelectedStatus(key)}
                   className={`px-2.5 py-0.5 rounded-md text-[11px] font-medium transition-all ${
                     isSelected
-                      ? "bg-gray-900 text-white shadow-xs"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      ? "bg-dark text-ink-inverse "
+                      : "bg-line-soft text-ink-2 hover:bg-line"
                   }`}
                 >
                   {label}
@@ -699,7 +699,7 @@ export default function ApplicationsManager() {
             <button
               type="button"
               onClick={handleResetFilters}
-              className="text-xs text-rose-600 hover:text-rose-800 font-medium flex items-center gap-1"
+              className="text-xs text-coral hover:text-coral font-medium flex items-center gap-1"
             >
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -712,8 +712,8 @@ export default function ApplicationsManager() {
 
       {/* Loading Indicator */}
       {loading ? (
-        <div className="py-20 text-center text-gray-400 text-sm bg-white rounded-xl border border-gray-200">
-          <div className="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-gray-400 rounded-full mb-2" />
+        <div className="py-20 text-center text-ink-3 text-sm card">
+          <div className="animate-spin inline-block w-6 h-6 border-2 border-current border-t-transparent text-ink-3 rounded-full mb-2" />
           <p>Loading application data...</p>
         </div>
       ) : (
@@ -721,7 +721,7 @@ export default function ApplicationsManager() {
           {/* Mobile Card View */}
           <div className="md:hidden space-y-3">
             {filteredApps.length === 0 ? (
-              <div className="bg-white border border-gray-200 rounded-xl shadow-sm">
+              <div className="card shadow-sm">
                 <EmptyState />
               </div>
             ) : (
@@ -732,29 +732,29 @@ export default function ApplicationsManager() {
                 return (
                   <div
                     key={app.id}
-                    className="bg-white border border-gray-200 rounded-xl shadow-sm p-4"
+                    className="card shadow-sm p-4"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         {app.qualification ? (
-                          <span className="inline-block text-[11px] font-medium tracking-wide text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded mb-1">
+                          <span className="inline-block font-mono-label text-[0.6rem] tracking-wide text-accent bg-accent-soft border border-accent/20 px-2 py-0.5 rounded-sm mb-1">
                             {app.qualification}
                           </span>
                         ) : (
-                          <span className="inline-block text-[10px] text-gray-400 italic mb-1">
+                          <span className="inline-block text-[10px] text-ink-3 italic mb-1">
                             No qualification listed
                           </span>
                         )}
-                        <div className="font-semibold text-gray-900 leading-tight truncate">
+                        <div className="font-semibold text-ink leading-tight truncate">
                           {app.candidateName}
                         </div>
-                        <div className="text-xs text-gray-500 mt-0.5 truncate">{app.email}</div>
-                        <div className="text-xs text-gray-700 mt-1 font-medium">{app.role}</div>
+                        <div className="text-xs text-ink-3 mt-0.5 truncate">{app.email}</div>
+                        <div className="text-xs text-ink-2 mt-1 font-medium">{app.role}</div>
                       </div>
                       <button
                         type="button"
                         onClick={() => toggleRowExpand(app.id)}
-                        className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors shrink-0"
+                        className="p-1 rounded text-ink-3 hover:text-ink-2 hover:bg-line-soft transition-colors shrink-0"
                         title="View details"
                       >
                         <svg
@@ -771,13 +771,13 @@ export default function ApplicationsManager() {
                     </div>
 
                     <div className="flex items-center justify-between gap-2 mt-3">
-                      <span className="text-[11px] text-gray-500 font-mono">{app.appliedDate}</span>
+                      <span className="text-[11px] text-ink-3 font-mono">{app.appliedDate}</span>
                       {app.resumeUrl && (
                         <a
                           href={app.resumeUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-medium underline"
+                          className="inline-flex items-center gap-1.5 text-xs text-accent hover:text-accent-strong font-medium underline"
                         >
                           View Resume
                         </a>
@@ -790,12 +790,12 @@ export default function ApplicationsManager() {
                     </div>
 
                     {isExpanded && (
-                      <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="mt-3 pt-3 border-t border-line-soft">
                         <DetailsGrid app={app} cols="grid-cols-2" />
                       </div>
                     )}
 
-                    <div className="mt-3 pt-3 border-t border-gray-100">
+                    <div className="mt-3 pt-3 border-t border-line-soft">
                       <ActionButtons app={app} currentRound={currentRound} wrap />
                     </div>
                   </div>
@@ -805,10 +805,10 @@ export default function ApplicationsManager() {
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden md:block bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+          <div className="hidden md:block card overflow-hidden shadow-sm">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm min-w-[880px]">
-                <thead className="bg-gray-50 text-gray-600 font-medium border-b border-gray-200">
+                <thead className="bg-paper-alt text-ink-2 font-medium border-b border-line">
                   <tr>
                     <th className="px-4 py-4 w-10"></th>
                     <th className="px-6 py-4">Applicant</th>
@@ -819,7 +819,7 @@ export default function ApplicationsManager() {
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-line-soft">
                   {filteredApps.length === 0 ? (
                     <tr>
                       <td colSpan={7}>
@@ -833,12 +833,12 @@ export default function ApplicationsManager() {
 
                       return (
                         <Fragment key={app.id}>
-                          <tr className="hover:bg-gray-50/50 transition-colors">
+                          <tr className="hover:bg-paper-alt/50 transition-colors">
                             <td className="pl-4 py-4 text-center">
                               <button
                                 type="button"
                                 onClick={() => toggleRowExpand(app.id)}
-                                className="p-1 rounded text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+                                className="p-1 rounded text-ink-3 hover:text-ink-2 hover:bg-line-soft transition-colors"
                                 title="View details"
                               >
                                 <svg
@@ -856,21 +856,21 @@ export default function ApplicationsManager() {
 
                             <td className="px-6 py-4">
                               {app.qualification ? (
-                                <span className="inline-block text-[11px] font-medium tracking-wide text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded mb-1">
+                                <span className="inline-block font-mono-label text-[0.6rem] tracking-wide text-accent bg-accent-soft border border-accent/20 px-2 py-0.5 rounded-sm mb-1">
                                   {app.qualification}
                                 </span>
                               ) : (
-                                <span className="inline-block text-[10px] text-gray-400 italic mb-1">
+                                <span className="inline-block text-[10px] text-ink-3 italic mb-1">
                                   No qualification listed
                                 </span>
                               )}
-                              <div className="font-semibold text-gray-900 leading-tight">
+                              <div className="font-semibold text-ink leading-tight">
                                 {app.candidateName}
                               </div>
-                              <div className="text-xs text-gray-500 mt-0.5">{app.email}</div>
+                              <div className="text-xs text-ink-3 mt-0.5">{app.email}</div>
                             </td>
 
-                            <td className="px-6 py-4 text-gray-700 font-medium">{app.role}</td>
+                            <td className="px-6 py-4 text-ink-2 font-medium">{app.role}</td>
 
                             <td className="px-6 py-4">
                               {app.resumeUrl ? (
@@ -878,7 +878,7 @@ export default function ApplicationsManager() {
                                   href={app.resumeUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-medium underline"
+                                  className="inline-flex items-center gap-1.5 text-xs text-accent hover:text-accent-strong font-medium underline"
                                 >
                                   <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path
@@ -891,11 +891,11 @@ export default function ApplicationsManager() {
                                   View Resume
                                 </a>
                               ) : (
-                                <span className="text-xs text-gray-400">N/A</span>
+                                <span className="text-xs text-ink-3">N/A</span>
                               )}
                             </td>
 
-                            <td className="px-6 py-4 text-gray-500 font-mono text-xs">
+                            <td className="px-6 py-4 text-ink-3 font-mono text-xs">
                               {app.appliedDate}
                             </td>
 
@@ -910,7 +910,7 @@ export default function ApplicationsManager() {
                           </tr>
 
                           {isExpanded && (
-                            <tr className="bg-gray-50/70 border-b border-gray-100">
+                            <tr className="bg-paper-alt/70 border-b border-line-soft">
                               <td colSpan={7} className="px-8 py-3.5">
                                 <DetailsGrid app={app} />
                               </td>
@@ -929,14 +929,14 @@ export default function ApplicationsManager() {
 
       {/* Schedule / Reschedule Modal */}
       {activeModalId && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl border border-gray-100 max-h-[90vh] overflow-y-auto">
-            <h3 className="font-semibold text-gray-900 text-lg mb-1">
+        <div className="fixed inset-0 bg-dark/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="card max-w-md w-full p-6 shadow-float border border-line max-h-[90vh] overflow-y-auto">
+            <h3 className="font-semibold text-ink text-lg mb-1">
               {isRescheduling
                 ? `Reschedule Interview — Round ${targetRound}`
                 : `Schedule Interview — Round ${targetRound}`}
             </h3>
-            <p className="text-xs text-gray-500 mb-5">
+            <p className="text-xs text-ink-3 mb-5">
               {isRescheduling
                 ? "Update interview timing, mode, or coordinates for this round."
                 : "Set interview timing and location or video coordinates for this round."}
@@ -947,17 +947,17 @@ export default function ApplicationsManager() {
               className="space-y-4"
             >
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1.5">
+                <label className="block text-xs font-medium text-ink-2 mb-1.5">
                   Interview Mode
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setScheduleData({ ...scheduleData, mode: "Online" })}
-                    className={`py-2 text-xs font-medium rounded-lg border text-center transition-colors ${
+                    className={`py-2 text-xs font-medium rounded-sm border text-center transition-colors ${
                       scheduleData.mode === "Online"
                         ? "border-black bg-black text-white"
-                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                        : "border-line bg-white text-ink-2 hover:bg-paper-alt"
                     }`}
                   >
                     Online (Video Call)
@@ -965,10 +965,10 @@ export default function ApplicationsManager() {
                   <button
                     type="button"
                     onClick={() => setScheduleData({ ...scheduleData, mode: "Offline" })}
-                    className={`py-2 text-xs font-medium rounded-lg border text-center transition-colors ${
+                    className={`py-2 text-xs font-medium rounded-sm border text-center transition-colors ${
                       scheduleData.mode === "Offline"
                         ? "border-black bg-black text-white"
-                        : "border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                        : "border-line bg-white text-ink-2 hover:bg-paper-alt"
                     }`}
                   >
                     Offline (In-Person)
@@ -977,7 +977,7 @@ export default function ApplicationsManager() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-ink-2 mb-1">
                   Date & Time
                 </label>
                 <input
@@ -987,12 +987,12 @@ export default function ApplicationsManager() {
                   onChange={(e) =>
                     setScheduleData({ ...scheduleData, dateTime: e.target.value })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-line rounded-sm text-sm focus:outline-none focus:border-accent"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">
+                <label className="block text-xs font-medium text-ink-2 mb-1">
                   {scheduleData.mode === "Online"
                     ? "Meeting Link (Google Meet / Zoom)"
                     : "Office Venue / Floor"}
@@ -1011,7 +1011,7 @@ export default function ApplicationsManager() {
                       locationOrLink: e.target.value,
                     })
                   }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-line rounded-sm text-sm focus:outline-none focus:border-accent"
                 />
               </div>
 
@@ -1020,14 +1020,14 @@ export default function ApplicationsManager() {
                   type="button"
                   disabled={schedulingLoading}
                   onClick={() => setActiveModalId(null)}
-                  className="px-3 py-2 text-xs text-gray-600 hover:bg-gray-100 rounded-lg transition-colors disabled:opacity-50"
+                  className="px-3 py-2 text-xs text-ink-2 hover:bg-line-soft rounded-sm transition-colors disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={schedulingLoading}
-                  className="px-4 py-2 text-xs bg-black text-white hover:bg-gray-800 rounded-lg font-medium transition-colors disabled:opacity-50"
+                  className="px-4 py-2 text-xs bg-accent text-white hover:bg-accent-strong rounded-sm font-medium transition-colors disabled:opacity-50"
                 >
                   {schedulingLoading
                     ? "Saving..."

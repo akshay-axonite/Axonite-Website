@@ -60,10 +60,10 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-ink flex items-center justify-center px-6">
-      <div className="w-full max-w-sm bg-white rounded-2xl p-8">
+    <div className="min-h-screen bg-dark flex items-center justify-center px-6">
+      <div className="w-full max-w-sm bg-white border border-line rounded-lg p-8 shadow-float">
         {/* Logo - centered */}
-        <div className="flex justify-center mb-6">
+        <div className="flex justify-center mb-7">
           <img
             src="/logo-landscape.png"
             alt="Axonite"
@@ -72,19 +72,20 @@ export default function AdminLogin() {
         </div>
 
         <div className="mb-6">
-          <h1 className="font-display text-2xl font-semibold mb-1">Admin sign in</h1>
-          <p className="text-graphite text-sm">Restricted to Axonite staff.</p>
+          <p className="eyebrow mb-2">Restricted</p>
+          <h1 className="text-display-xs mb-1">Admin sign in</h1>
+          <p className="text-ink-2 text-sm">Restricted to Axonite staff.</p>
         </div>
 
         {error && (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-4">
+          <p className="text-sm text-coral bg-coral/10 border border-coral/30 rounded-sm px-3 py-2 mb-4">
             {error}
           </p>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="font-mono-label text-[10px] text-graphite block mb-2">
+            <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">
               Username or Email
             </label>
             <input
@@ -95,12 +96,12 @@ export default function AdminLogin() {
               required
               disabled={loading}
               placeholder="Enter username or email"
-              className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors disabled:opacity-50"
+              className="w-full bg-paper border border-line rounded-sm px-4 py-3 text-sm text-ink placeholder:text-ink-3 focus:outline-none focus:border-accent transition-colors disabled:opacity-50"
             />
           </div>
 
           <div>
-            <label className="font-mono-label text-[10px] text-graphite block mb-2">
+            <label className="font-mono-label text-[0.62rem] text-ink-3 block mb-2">
               Password
             </label>
             <input
@@ -110,15 +111,14 @@ export default function AdminLogin() {
               required
               disabled={loading}
               placeholder="Enter password"
-              className="w-full border border-line-soft rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-signal transition-colors disabled:opacity-50"
+              className="w-full bg-paper border border-line rounded-sm px-4 py-3 text-sm text-ink placeholder:text-ink-3 focus:outline-none focus:border-accent transition-colors disabled:opacity-50"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full text-white font-mono-label text-[11px] px-6 py-3.5 rounded-full transition-opacity hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
-            style={{ background: "linear-gradient(90deg, #9B4FC9, #3E5FE0, #29B6F6)" }}
+            className="w-full bg-accent text-white font-semibold text-[0.9375rem] px-6 py-3.5 rounded-full transition-colors hover:bg-accent-strong disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? "Signing in..." : "Sign in"}
           </button>

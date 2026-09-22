@@ -40,9 +40,9 @@ export default function AdminLayout() {
 
   const sidebarContent = (
     <>
-      <div className="px-6 py-6 border-b border-line shrink-0">
+      <div className="px-6 py-6 border-b border-line-dark shrink-0">
         <BrandMark height={40} />
-        <p className="font-mono-label text-[10px] text-mist mt-3">Admin panel</p>
+        <p className="font-mono-label text-[0.62rem] text-ink-inverse-2 mt-3">Admin panel</p>
       </div>
 
       {/* Navigation list */}
@@ -53,8 +53,10 @@ export default function AdminLayout() {
             to={l.to}
             end={l.end}
             className={({ isActive }) =>
-              `block px-4 py-2.5 rounded-lg text-sm transition-colors ${
-                isActive ? "bg-white/10 text-white" : "text-mist hover:text-white hover:bg-white/5"
+              `block px-4 py-2.5 rounded-sm text-sm transition-colors ${
+                isActive
+                  ? "bg-accent text-white"
+                  : "text-ink-inverse-2 hover:text-ink-inverse hover:bg-white/5"
               }`
             }
           >
@@ -64,16 +66,16 @@ export default function AdminLayout() {
       </nav>
 
       {/* Footer actions */}
-      <div className="px-4 py-6 border-t border-line space-y-1 shrink-0">
+      <div className="px-4 py-6 border-t border-line-dark space-y-1 shrink-0">
         <a
           href="/"
-          className="block px-4 py-2 rounded-lg text-xs text-mist hover:text-white hover:bg-white/5"
+          className="block px-4 py-2 rounded-sm text-xs text-ink-inverse-2 hover:text-ink-inverse hover:bg-white/5"
         >
           View live site ↗
         </a>
         <button
           onClick={handleLogout}
-          className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-mist hover:text-white hover:bg-white/5"
+          className="w-full text-left px-4 py-2.5 rounded-sm text-sm text-ink-inverse-2 hover:text-ink-inverse hover:bg-white/5"
         >
           Log out
         </button>
@@ -84,7 +86,7 @@ export default function AdminLayout() {
   return (
     <div className="h-screen bg-paper flex overflow-hidden">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-60 bg-ink text-paper flex-col shrink-0 h-screen sticky top-0 border-r border-line select-none">
+      <aside className="hidden md:flex w-60 bg-dark text-ink-inverse flex-col shrink-0 h-screen sticky top-0 border-r border-line-dark select-none">
         {sidebarContent}
       </aside>
 
@@ -101,7 +103,7 @@ export default function AdminLayout() {
         />
 
         <aside
-          className={`absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-ink text-paper flex flex-col border-r border-line select-none transform transition-transform duration-200 ${
+          className={`absolute left-0 top-0 h-full w-72 max-w-[85vw] bg-dark text-ink-inverse flex flex-col border-r border-line-dark select-none transform transition-transform duration-200 ${
             isMobileNavOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -117,7 +119,7 @@ export default function AdminLayout() {
             type="button"
             onClick={() => setIsMobileNavOpen(true)}
             aria-label="Open navigation menu"
-            className="p-2 -ml-2 rounded-lg text-ink hover:bg-black/5"
+            className="p-2 -ml-2 rounded-sm text-ink hover:bg-black/5"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path

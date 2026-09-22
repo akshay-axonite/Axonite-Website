@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useParallax } from "../hooks/useParallax";
+import { useEffect, useRef, useState } from "react";
 import Reveal from "../components/Reveal";
 
 const API_BASE_URL = "http://localhost:5000/api";
@@ -15,19 +14,39 @@ function formatDisplayDate(dateStr) {
   });
 }
 
+function PostMeta({ post, className = "" }) {
+  if (!post.date && !post.tag) return null;
+  return (
+    <div className={`flex items-center gap-2.5 font-mono-label text-[0.62rem] ${className}`}>
+      {post.date && <span className="text-ink-3">{post.date}</span>}
+      {post.date && post.tag && (
+        <span className="w-1 h-1 rounded-full bg-ink-3" aria-hidden="true" />
+      )}
+      {post.tag && <span className="text-accent">{post.tag}</span>}
+    </div>
+  );
+}
+
+function PostMedia({ post, className }) {
+  if (post.video) {
+    return <video src={post.video} controls className={className} />;
+  }
+  if (!post.image) return null;
+  return <img src={post.image} alt="" className={className} />;
+}
+
 export default function Blog() {
-  const bgRef = useParallax(-0.12);
-  const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activePost, setActivePost] = useState(null); // Controls the full article modal
+  const [activePost, setActivePost] = useState(null);
 
   useEffect(() => {
     async function fetchPosts() {
       try {
         const response = await fetch(`${API_BASE_URL}/blog`);
         const data = await response.json();
-        const formatted = (Array.isArray(data) ? data : []).map((p) => ({
-          id: p.id || p.blog_id,
+        const formatted = (Array.isArray(data) ? data : []).map((p, i) => ({
+          id: p.id || p.blog_id || `post-${i}`,
           title: p.title || p.blog_title || "",
           tag: p.tag || p.blog_sub_title || "",
           excerpt: p.excerpt || p["blog content"] || "",
@@ -45,217 +64,272 @@ export default function Blog() {
     fetchPosts();
   }, []);
 
-  // Lock background scroll when reading modal is open
-  useEffect(() => {
-    if (activePost) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [activePost]);
+  if (!loading && posts.length === 0) {
+    return (
+      <div className="bg-paper">
+        <BlogHero  />
+        <BlogEmpty />
+      </div>
+    );
+  }
 
+  // First post gets the wide editorial treatment; the rest form the index below.
   const [featured, ...rest] = posts;
 
   return (
-    <div>
-      {/* Hero Section */}
-      <section className="relative bg-ink grain overflow-hidden pt-40 pb-20">
-        <div
-          ref={bgRef}
-          data-parallax
-          className="absolute -top-24 right-1/4 w-[480px] h-[480px] rounded-full opacity-[0.14]"
-          style={{ background: "radial-gradient(circle, #3E5FE0, transparent 70%)" }}
-          aria-hidden="true"
-        />
-        <div className="relative max-w-4xl mx-auto px-6">
-          <p className="font-mono-label text-[14px] text-signal mb-6">Blog</p>
-          <h1 className="font-display text-paper text-4xl md:text-6xl font-semibold leading-tight">
-            Notes from building product software.
-          </h1>
-          <p className="text-mist text-lg mt-6 max-w-2xl leading-relaxed">
-            Engineering decisions, design trade-offs, and the occasional
-            postmortem — written by the people who did the work.
-          </p>
-        </div>
-      </section>
+    <div className="bg-paper">
+      <BlogHero  />
 
-      {/* Main Content Section */}
-      <section className="bg-paper py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          {loading ? (
-            <p className="text-graphite text-sm">Loading posts...</p>
-          ) : !featured ? (
-            <p className="text-graphite text-sm">No posts published yet — check back soon.</p>
-          ) : (
-            <>
-              {/* Horizontal Featured Post */}
-              <Reveal>
-                <article className="grid md:grid-cols-5 gap-8 bg-white border border-line-soft rounded-2xl p-8 md:p-10 mb-14">
-                  <div className={featured.image || featured.video ? "md:col-span-3" : "md:col-span-5"}>
-                    {featured.date && (
-                      <p className="font-mono-label text-[12px] text-graphite mb-1.5">
-                        {featured.date}
-                      </p>
-                    )}
+      <section className="max-w-container mx-auto px-6 py-20">
+        {loading && <BlogSkeleton />}
 
-                    {featured.tag && (
-                      <div className="font-mono-label text-[12px] text-signal-dim mb-4">
-                        <span>{featured.tag}</span>
-                      </div>
-                    )}
+        {!loading && featured && (
+          <>
+            <p className="eyebrow">Latest</p>
 
-                    <h2 
-                      onClick={() => setActivePost(featured)}
-                      className="font-display text-2xl md:text-3xl font-semibold mb-4 cursor-pointer hover:text-signal transition-colors"
-                    >
-                      {featured.title}
-                    </h2>
+            <Reveal className="mt-5">
+              <article className="grid gap-8 card card--hover p-7 lg:grid-cols-5 lg:p-9">
+                <div className={featured.image || featured.video ? "lg:col-span-3" : "lg:col-span-5"}>
+                  <PostMeta post={featured} />
 
-                    <p className="text-graphite leading-relaxed max-w-xl line-clamp-3">
-                      {featured.excerpt}
-                    </p>
+                  <h2 className="text-display-xs mt-3">
+                    {featured.title}
+                  </h2>
 
+                  <p className="text-ink-2 text-[0.95rem] leading-relaxed mt-4 max-w-xl line-clamp-3">
+                    {featured.excerpt}
+                  </p>
+
+                  <div className="mt-7">
                     <button
                       type="button"
                       onClick={() => setActivePost(featured)}
-                      className="inline-flex mt-6 text-signal-dim font-mono-label text-[11px] underline underline-offset-4 hover:text-signal transition-colors cursor-pointer"
+                      className="inline-flex items-center justify-center bg-accent text-white font-semibold text-[0.9375rem] px-6 py-3 rounded-full transition-colors hover:bg-accent-strong"
                     >
-                      Read the post →
+                      Read the post
                     </button>
                   </div>
+                </div>
 
-                  {(featured.image || featured.video) && (
-                    <div 
-                      onClick={() => setActivePost(featured)}
-                      className="md:col-span-2 flex items-center justify-center cursor-pointer"
-                    >
-                      {featured.video ? (
-                        <video
-                          src={featured.video}
-                          controls
-                          className="w-full max-h-64 rounded-xl border border-line-soft object-cover"
-                        />
-                      ) : (
-                        <img
-                          src={featured.image}
-                          alt={featured.title}
-                          className="w-full max-h-64 rounded-xl border border-line-soft object-cover hover:opacity-95 transition-opacity"
-                        />
-                      )}
-                    </div>
-                  )}
-                </article>
-              </Reveal>
+                {(featured.image || featured.video) && (
+                  <div className="lg:col-span-2">
+                    <PostMedia
+                      post={featured}
+                      className="w-full h-56 lg:h-full rounded-md border border-line object-cover bg-paper-alt"
+                    />
+                  </div>
+                )}
+              </article>
+            </Reveal>
 
-              {/* Vertical Remaining Posts */}
-              <div className="grid md:grid-cols-3 gap-6">
-                {rest.map((post, i) => (
-                  <Reveal key={post.id} delay={i * 100}>
-                    <article 
-                      onClick={() => setActivePost(post)}
-                      className="border border-line-soft rounded-2xl p-7 h-full hover:border-signal transition-colors cursor-pointer flex flex-col justify-between group"
-                    >
-                      <div>
-                        {post.image && (
-                          <img
-                            src={post.image}
-                            alt={post.title}
-                            className="w-full h-44 object-cover rounded-xl border border-line-soft mb-4 group-hover:opacity-95 transition-opacity"
-                          />
-                        )}
+            {rest.length > 0 && (
+              <>
+                <h2 className="eyebrow mt-16">More posts</h2>
 
-                        {post.date && (
-                          <p className="font-mono-label text-[12px] text-graphite mb-1.5">
-                            {post.date}
-                          </p>
-                        )}
+                <ul className="mt-6 grid gap-6 md:grid-cols-2">
+                  {rest.map((post, i) => (
+                    <li key={post.id}>
+                      <Reveal delay={i * 80} className="h-full">
+                        <article className="h-full flex flex-col card card--hover overflow-hidden">
+                          {post.image && (
+                            <PostMedia
+                              post={post}
+                              className="w-full h-44 object-cover bg-paper-alt"
+                            />
+                          )}
 
-                        {post.tag && (
-                          <div className="font-mono-label text-[12px] text-signal-dim mb-4">
-                            <span>{post.tag}</span>
+                          <div className="flex flex-col flex-1 p-6">
+                            <PostMeta post={post} />
+
+                            <h3 className="text-[1.25rem] mt-3">
+                              {post.title}
+                            </h3>
+
+                            <p className="text-ink-2 text-[0.95rem] leading-relaxed mt-3 line-clamp-3">
+                              {post.excerpt}
+                            </p>
+
+                            <div className="mt-auto pt-6">
+                              <button
+                                type="button"
+                                onClick={() => setActivePost(post)}
+                                className="inline-flex items-center gap-2 font-semibold text-[0.9rem] text-accent transition-colors hover:text-accent-strong"
+                              >
+                                Read the post
+                                <span aria-hidden="true">→</span>
+                              </button>
+                            </div>
                           </div>
-                        )}
-
-                        <h3 className="font-display text-lg font-semibold mb-3 leading-snug group-hover:text-signal transition-colors">
-                          {post.title}
-                        </h3>
-                        <p className="text-graphite text-sm leading-relaxed line-clamp-3">
-                          {post.excerpt}
-                        </p>
-                      </div>
-
-                      <span className="inline-flex mt-5 text-signal-dim font-mono-label text-[11px] underline underline-offset-4">
-                        Read post →
-                      </span>
-                    </article>
-                  </Reveal>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
+                        </article>
+                      </Reveal>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </>
+        )}
       </section>
 
-      {/* Big Reader Modal for Full Content */}
       {activePost && (
-        <div 
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
-          onClick={() => setActivePost(null)}
-        >
-          <div 
-            className="relative bg-paper w-full max-w-3xl max-h-[90vh] rounded-2xl sm:rounded-3xl shadow-2xl border border-line-soft overflow-hidden flex flex-col"
-            onClick={(e) => e.stopPropagation()}
+        <PostReader post={activePost} onClose={() => setActivePost(null)} />
+      )}
+    </div>
+  );
+}
+
+function BlogHero() {
+  return (
+    <section className="relative bg-paper ambient-wash overflow-hidden pt-32 pb-16 section-rule">
+      <div className="relative max-w-prose mx-auto px-6">
+        <p className="eyebrow mb-5">Writing</p>
+        <h1 className="text-display max-w-[22ch]">
+          Notes from building product software.
+        </h1>
+        <p className="mt-6 max-w-[52ch] text-[1.125rem] leading-relaxed text-ink-2">
+          Engineering decisions, design trade-offs, and the occasional
+          postmortem — written by the people who did the work.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function BlogEmpty() {
+  return (
+    <section className="max-w-container mx-auto px-6 py-24">
+      <div className="max-w-[620px] mx-auto card px-8 py-14 text-center">
+        <h2 className="text-display-xs">
+          Nothing published yet.
+        </h2>
+        <p className="text-ink-2 text-[0.95rem] leading-relaxed mt-4">
+          We're working on the first few write-ups. In the meantime, tell us
+          what you'd want to read about.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function BlogSkeleton() {
+  return (
+    <div aria-hidden="true">
+      <div className="h-3 w-16 rounded-full bg-paper-alt" />
+      <div className="mt-4 card p-7 lg:p-9 animate-pulse">
+        <div className="grid gap-8 lg:grid-cols-5">
+          <div className="lg:col-span-3">
+            <div className="h-3 w-28 rounded-full bg-paper-alt" />
+            <div className="h-7 w-3/4 rounded-sm bg-paper-alt mt-5" />
+            <div className="h-3 w-full rounded-full bg-paper-alt mt-6" />
+            <div className="h-3 w-5/6 rounded-full bg-paper-alt mt-3" />
+            <div className="h-10 w-36 rounded-full bg-paper-alt mt-8" />
+          </div>
+          <div className="lg:col-span-2 h-56 lg:h-full min-h-[200px] rounded-sm bg-paper-alt" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const FOCUSABLE =
+  'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+function PostReader({ post, onClose }) {
+  const dialogRef = useRef(null);
+  const closeRef = useRef(null);
+
+  // Escape to close, Tab cycles within the dialog, focus returns whence it came.
+  useEffect(() => {
+    const opener = document.activeElement;
+    closeRef.current?.focus();
+
+    const onKeyDown = (e) => {
+      if (e.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (e.key !== "Tab") return;
+
+      const items = dialogRef.current?.querySelectorAll(FOCUSABLE);
+      if (!items || items.length === 0) return;
+
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+      if (opener instanceof HTMLElement) opener.focus();
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-dark/70 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+      onClick={onClose}
+    >
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="post-reader-title"
+        className="relative w-full max-w-3xl max-h-[90vh] rounded-lg bg-paper border border-line shadow-float overflow-hidden flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 z-10 bg-paper/95 backdrop-blur-md px-6 sm:px-8 py-4 border-b border-line flex items-center justify-between gap-4">
+          <PostMeta post={post} />
+
+          <button
+            type="button"
+            ref={closeRef}
+            onClick={onClose}
+            aria-label="Close article"
+            className="w-9 h-9 shrink-0 rounded-full border border-line text-ink-3 hover:text-paper hover:bg-dark flex items-center justify-center transition-colors"
           >
-            {/* Modal Header */}
-            <div className="sticky top-0 z-10 bg-paper/95 backdrop-blur-md px-6 sm:px-8 py-5 border-b border-line-soft flex items-center justify-between">
-              <div className="flex items-center gap-3 font-mono-label text-xs">
-                {activePost.date && <span className="text-graphite">{activePost.date}</span>}
-                {activePost.date && activePost.tag && <span>•</span>}
-                {activePost.tag && <span className="text-signal-dim">{activePost.tag}</span>}
-              </div>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path
+                d="M1 1l12 12M13 1L1 13"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+            </svg>
+          </button>
+        </div>
 
-              <button
-                type="button"
-                onClick={() => setActivePost(null)}
-                className="w-9 h-9 rounded-full border border-line-soft text-graphite hover:text-paper hover:bg-ink flex items-center justify-center text-lg transition-all"
-                title="Close"
-              >
-                ✕
-              </button>
-            </div>
+        <div className="px-6 sm:px-10 py-8 overflow-y-auto flex-1">
+          <h2
+            id="post-reader-title"
+            className="text-display-xs"
+          >
+            {post.title}
+          </h2>
 
-            {/* Modal Scrollable Body */}
-            <div className="px-6 sm:px-10 py-8 overflow-y-auto flex-1">
-              <h1 className="font-display text-2xl sm:text-4xl font-semibold leading-tight text-ink mb-6">
-                {activePost.title}
-              </h1>
+          {(post.image || post.video) && (
+            <PostMedia
+              post={post}
+              className="w-full max-h-96 rounded-md border border-line object-cover bg-paper-alt mt-7"
+            />
+          )}
 
-              {/* Media banner */}
-              {activePost.video ? (
-                <video
-                  src={activePost.video}
-                  controls
-                  className="w-full max-h-96 rounded-2xl border border-line-soft object-cover mb-8"
-                />
-              ) : activePost.image ? (
-                <img
-                  src={activePost.image}
-                  alt={activePost.title}
-                  className="w-full max-h-96 rounded-2xl border border-line-soft object-cover mb-8"
-                />
-              ) : null}
-
-              {/* Complete article content with preserved linebreaks */}
-              <div className="text-graphite text-base sm:text-lg leading-relaxed whitespace-pre-line font-normal space-y-4">
-                {activePost.excerpt}
-              </div>
-            </div>
+          <div className="text-ink-2 text-[1.05rem] leading-relaxed whitespace-pre-line mt-7">
+            {post.excerpt}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

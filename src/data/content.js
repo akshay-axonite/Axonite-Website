@@ -1,59 +1,62 @@
 export const products = [
   {
-    name: "Ledgerline",
-    tag: "Finance ops",
-    desc: "Reconciliation and expense workflows for finance teams who are tired of spreadsheets that break every quarter.",
-    idealFor: "Finance & accounts teams reconciling multiple bank and vendor feeds every month.",
+    name: "Polypus",
+    tag: "Intelligent automation",
+    desc: "Touchless document intake and controlled SAP posting that removes manual keying from business workflows.",
+    idealFor: "Enterprises processing high volumes of invoices, forms, and orders directly into ERP systems.",
     features: [
-      "Automatic matching against bank and vendor statements",
-      "Expense approval flows with audit trail",
-      "Exception queue for anything that doesn't reconcile cleanly",
-      "Exports straight into your existing accounting software",
+      "Multi-channel intake for emails, documents, and digital forms",
+      "OCR and LLM-powered data extraction and structural parsing",
+      "Real-time cross-validation against SAP master data",
+      "Human-in-the-loop review and approval controls",
+      "Automated, controlled SAP transaction posting with full audit trails",
     ],
   },
   {
-    name: "Fieldpost",
-    tag: "Field service",
-    desc: "Job scheduling and proof-of-work capture for teams that work outside an office — built for spotty connectivity.",
-    idealFor: "Field service and installation teams working across sites with unreliable networks.",
+    name: "MESIO",
+    tag: "Industrial IoT & MES",
+    desc: "A shop-floor execution and IoT platform replacing paper logs with connected dispensing, weighing, and reactor tracking.",
+    idealFor: "Global chemical and industrial manufacturers needing real-time batch control and plant-wide traceability.",
     features: [
-      "Offline-first job cards that sync when back online",
-      "Photo and signature proof-of-work capture",
-      "Route-aware scheduling for field crews",
-      "Live status visibility for the office team",
+      "Precision weighing and batch dispensing control",
+      "Paperless production tracking with digital recipe workflows",
+      "Direct IoT connectivity and telemetry for reactors and shop-floor equipment",
+      "Multi-site orchestration proven across global operations",
+      "Complete batch traceability, compliance logging, and process analytics",
     ],
   },
   {
-    name: "Rosterly",
-    tag: "Workforce",
-    desc: "Shift planning and attendance for hourly teams, with a phone-first interface that doesn't need training.",
-    idealFor: "Retail, warehouse, and hourly workforces managing shift patterns across locations.",
+    name: "FinOps Flow",
+    tag: "Treasury & close automation",
+    desc: "Automated month-end close and real-time cash position monitoring built to replace manual reconciliation marathons.",
+    idealFor: "Treasury, controllers, and finance teams looking to compress their MEC timeline and manage multi-account liquidity.",
     features: [
-      "Drag-and-drop shift planning across locations",
-      "Attendance via phone, no separate hardware",
-      "Shift-swap requests with manager approval",
-      "Payroll-ready hours export",
+      "Automated Month-End Close (MEC) task orchestration and review checkpoints",
+      "Continuous bank balance aggregation and real-time treasury position reporting",
+      "Intercompany reconciliation and automated journal entry generation",
+      "Cash flow forecasting and liquidity variance tracking",
+      "Audit-proof closing binders with complete historical trail",
     ],
   },
 ];
 
 export const services = [
   {
-    title: "Product engineering",
-    desc: "We design and build the software itself — from first prototype to the version your customers depend on daily.",
-  },
-  {
-    title: "Platform & infrastructure",
-    desc: "Systems that stay up: deployment pipelines, monitoring, and architecture that scales without a rewrite.",
+    title: "Design Systems",
+    desc: "Interfaces built on a shared language of components, so every new feature looks like it belongs.",
   },
   {
     title: "Applied AI",
     desc: "Model integration and automation where it actually removes work, not where it just sounds impressive in a deck.",
   },
   {
-    title: "Design systems",
-    desc: "Interfaces built on a shared language of components, so every new feature looks like it belongs.",
+    title: "Platform & Infrastructure",
+    desc: "Systems that stay up: deployment pipelines, monitoring, and architecture that scales without a rewrite.",
   },
+  {
+  title: "Product Support",
+  desc: "We stay on after launch: active maintenance, bug triage, and incremental improvements so your software never degrades into technical debt.",
+},
 ];
 
 export const process = [

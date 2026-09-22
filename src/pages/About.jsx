@@ -17,10 +17,10 @@ const values = [
 ];
 
 const facts = [
-  { label: "Founded", value: "2021" },
-  { label: "Team", value: "24 people" },
+  { label: "Founded", value: "2026" },
+  { label: "Team", value: "11 people" },
   { label: "Products live", value: "3" },
-  { label: "Based in", value: "Pune, IN" },
+  { label: "Based in", value: "Pune - IN & US" },
 ];
 
 export default function About() {
@@ -30,7 +30,7 @@ export default function About() {
         <div className="relative max-w-prose mx-auto px-6">
           <p className="eyebrow mb-5">About Axonite</p>
           <h1 className="text-display">
-            A small team building software we'd want to use ourselves.
+           A scalable team building software we'd want to use ourselves.
           </h1>
           <p className="mt-6 max-w-[52ch] text-[1.125rem] leading-relaxed text-ink-2">
             Axonite Technology Pvt Ltd started as three engineers frustrated

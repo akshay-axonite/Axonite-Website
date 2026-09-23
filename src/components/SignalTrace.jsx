@@ -29,7 +29,7 @@ export default function SignalTrace({ className = "", variant = "light" }) {
       <path
         d="M0 90 L120 90 L170 30 L260 30 L300 90 L420 90 L470 20 L560 20 L610 90 L800 90"
         stroke={variant === "light" ? `url(#${gradId})` : "#e2ded6"}
-        strokeOpacity="0.5"
+        strokeOpacity="0.8"
         strokeWidth="1.5"
         className="trace-line"
       />

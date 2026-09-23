@@ -13,7 +13,7 @@ export default function Footer() {
 
             <p className="mt-6 text-[0.9rem] leading-relaxed max-w-sm">
               Axonite builds and runs product software for teams that cannot
-              afford downtime — finance operations, field service and workforce
+              afford downtime finance operations, field service and workforce
               planning. Fewer features, all of them load-bearing.
             </p>
 
@@ -70,10 +70,10 @@ export default function Footer() {
                 Services
               </h3>
               <ul className="space-y-2.5 text-[0.9rem]">
-                <li><Link to="/services" className="hover:text-white transition-colors">Product engineering</Link></li>
-                <li><Link to="/services" className="hover:text-white transition-colors">Platform &amp; infrastructure</Link></li>
+                <li><Link to="/services" className="hover:text-white transition-colors">Design Systems</Link></li>
                 <li><Link to="/services" className="hover:text-white transition-colors">Applied AI</Link></li>
-                <li><Link to="/services" className="hover:text-white transition-colors">Design systems</Link></li>
+                <li><Link to="/services" className="hover:text-white transition-colors">Platform & Infrastructure</Link></li>
+                <li><Link to="/services" className="hover:text-white transition-colors">Product Support</Link></li>
               </ul>
             </div>
 
@@ -93,7 +93,7 @@ export default function Footer() {
                   </a>
                 </li>
                 <li>Pune, Maharashtra, India</li>
-                <li>Mon – Fri, 09:00 – 21:00 IST</li>
+                <li>Mon – Fri, 09:00 – 18:00 IST</li>
               </ul>
             </div>
           </nav>

@@ -61,7 +61,7 @@ export default function About() {
 
           <Reveal delay={100}>
             <div className="card p-8">
-              <SignalTrace className="w-full h-14 mb-7" variant="dark" />
+              <SignalTrace className="w-full h-14 mb-7" variant="light" />
               <dl className="grid grid-cols-2 gap-x-6 gap-y-7">
                 {facts.map((f) => (
                   <div key={f.label}>

@@ -16,7 +16,7 @@ export default function Home() {
       {/* HERO */}
       <section className="relative bg-paper ambient-wash overflow-hidden pt-32 pb-16 section-rule">
         <div className="relative max-w-container mx-auto px-6">
-          <p className="eyebrow mb-5">Axonite Technology Pvt Ltd Â· Product software</p>
+          <p className="eyebrow mb-5">Axonite Technology Pvt Ltd — Product software</p>
 
           <h1 className="text-display max-w-[15ch]">
             Software that stays useful after launch day.
@@ -24,7 +24,7 @@ export default function Home() {
 
           <p className="mt-6 max-w-[46ch] text-[1.16rem] leading-relaxed text-ink-2">
             We build and run product software for teams that can't afford
-            downtime â€” finance ops, field service, workforce planning. Fewer
+            downtime finance ops, field service, workforce planning. Fewer
             features, all of them load-bearing.
           </p>
 
@@ -45,11 +45,11 @@ export default function Home() {
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3 mt-12 pt-6 border-t border-line text-[0.85rem] text-ink-3">
             <span>
-              <strong className="text-ink font-semibold">In production today</strong> â€” three
+              <strong className="text-ink font-semibold">In production today  </strong>  three
               products across finance, field and workforce
             </span>
-            <span aria-hidden="true" className="hidden sm:inline text-line">Â·</span>
-            <span>Pune, India Â· serving teams across India</span>
+            <span aria-hidden="true" className="hidden sm:inline text-line"></span>
+            <span>Pune, India  — serving teams across India</span>
           </div>
         </div>
 

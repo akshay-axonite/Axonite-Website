@@ -79,6 +79,20 @@ export default function About() {
         </div>
       </section>
 
+      <section className="vision bg-paper ambient-wash overflow-hidden pt-16 pb-20 section-rule">
+        <div className="vision max-w-container mx-auto px-6">
+          <Reveal>
+            <div className="max-w-[720px]"></div>
+            <h2 className="text-display-sm max-w-[22ch]">
+              Our Vision
+            </h2>
+            <p className="mt-3  text-[0.9375rem] leading-relaxed !text-ink-inverse-2">
+              We envision a future where technology empowers teams to focus on what they do best — delivering value to their customers.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
       <section className="section-dark section-rule py-24">
         <div className="max-w-container mx-auto px-6">
           <Reveal>

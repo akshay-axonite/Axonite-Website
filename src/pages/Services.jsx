@@ -42,7 +42,7 @@ export default function Services() {
           <Reveal>
             <div className="max-w-[720px] mb-12">
               <p className="eyebrow mb-4">Engagement flow</p>
-              <h2 className="text-display-sm max-w-[20ch]">
+              <h2 className="text-display-sm max-w-[25ch]">
                 Five stages, repeated every release.
               </h2>
             </div>

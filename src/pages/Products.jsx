@@ -79,7 +79,7 @@ export default function Products() {
                         to="/contact"
                         className="w-full inline-flex items-center justify-center bg-accent text-white text-[0.9rem] font-semibold px-5 py-3 rounded-full transition-colors hover:bg-accent-strong"
                       >
-                        Request a demo
+                        Explore Product
                       </Link>
                     </div>  
                   </div>

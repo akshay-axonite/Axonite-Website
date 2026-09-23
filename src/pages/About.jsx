@@ -178,6 +178,94 @@ export default function About() {
 
   </div>
 </section>
+ <section className="bg-white py-20 section-rule">
+  <div className="max-w-4xl mx-auto px-6">
+
+    {/* Section Heading */}
+    <Reveal>
+      <div className="text-center max-w-2xl mx-auto mb-12">
+        <p className="eyebrow mb-4">Our Leadership</p>
+
+        <h2 className="text-display-sm">
+          The people behind Axonite
+        </h2>
+
+        <p className="mt-4 text-ink-2 leading-relaxed">
+          Axonite is built on deep industry experience, practical technology,
+          and a commitment to solving real operational challenges.
+        </p>
+      </div>
+    </Reveal>
+
+    {/* Founders */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      {/* Founder 1 */}
+      <Reveal>
+        <div className="card overflow-hidden max-w-sm mx-auto w-full">
+
+          <div className="aspect-[3/3] overflow-hidden bg-paper">
+            <img
+              src="Founder1.png"
+              alt="Founder of Axonite Technologies"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          <div className="p-6">
+            <p className="eyebrow mb-2">Founder</p>
+
+            <h3 className="font-serif text-[1.5rem] leading-tight text-ink">
+              Subodh Mahant
+            </h3>
+
+            <p className="mt-3 text-sm text-ink-2 leading-relaxed">
+              With extensive experience in manufacturing automation and
+              enterprise technology, the founder brings a practical
+              understanding of industrial operations and a vision for
+              building reliable software solutions.
+            </p>
+          </div>
+
+        </div>
+      </Reveal>
+
+      {/* Founder 2 */}
+      <Reveal delay={100}>
+  <div className="card overflow-hidden max-w-sm mx-auto w-full">
+
+    {/* Optimized Founder Image */}
+    <div className=" h-65 overflow-hidden bg-paper">
+      <img
+        src="Founder2.png"
+        alt="David Havenridge, Founder of Axonite Technologies"
+        className="w-full h-full object-cover object-[center_25%]"
+      />
+    </div>
+
+    {/* Existing Card Content */}
+    <div className="p-5">
+      <p className="eyebrow mb-2">Founder</p>
+
+      <h3 className="font-serif text-[1.5rem] leading-tight text-ink">
+        David Havenridge
+      </h3>
+
+      <p className="mt-2 text-sm text-ink-2 leading-relaxed">
+        Combining technology expertise with a strong focus on business
+        operations, the founder helps shape Axonite's products,
+        engineering capabilities, and long-term technology direction.
+      </p>
+    </div>
+
+  </div>
+</Reveal>
+
+    </div>
+
+  </div>
+</section>
+
       <section className="section-dark section-rule py-24">
         <div className="max-w-container mx-auto px-6">
           <Reveal>

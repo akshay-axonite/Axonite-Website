@@ -112,9 +112,8 @@ export default function Footer() {
         </div>
 
         <p className="pb-10 max-w-3xl text-[0.78rem] leading-relaxed">
-          Ledgerline, Fieldpost and Rosterly are products of Axonite Technology
-          Pvt Ltd. Product names and customer references shown on this site are
-          illustrative examples used to demonstrate the product layout.
+          Polypus, Mesio and FineOps Flow are products of Axonite Technology
+          Pvt Ltd.
         </p>
       </div>
     </footer>

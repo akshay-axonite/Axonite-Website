@@ -82,10 +82,10 @@ export default function About() {
               customers are operations teams across India who've outgrown
               spreadsheets but don't want enterprise software's overhead.
             </p>
-            <p className="text-ink-2 leading-relaxed max-w-3xl text-[0.95rem]">
+            {/* <p className="text-ink-2 leading-relaxed max-w-3xl text-[0.95rem]">
               We stay small on purpose — every person here can trace a support
               ticket back to the code they wrote.
-            </p>
+            </p> */}
           </Reveal>
 
           <Reveal delay={100}>
